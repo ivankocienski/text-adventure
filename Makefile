@@ -9,7 +9,9 @@ SOURCES= \
 	engine.cc \
 	room.cc \
 	interface.cc \
-	input_handler.cc
+	input_handler.cc \
+	player.cc \
+	world.cc
 
 OBJECTS= $(patsubst %.cc,%.o,$(SOURCES)) 
 
@@ -36,7 +38,7 @@ all: $(OBJECTS)
 
 clean:
 	[ -e $(EXE) ] && rm $(EXE)
-	rm $(OBJECTS)
+	for obj in "$(OBJECTS)"; do [ -e $obj ] && rm $obj; done
 
 
 

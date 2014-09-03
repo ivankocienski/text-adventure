@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <string>
 #include "interface.hh"
 
 namespace ta {
@@ -9,10 +10,15 @@ namespace ta {
 
     private:
 
+      std::string m_description;
+      std::string m_name;
+
     public:
 
-      Room(); 
+      Room( char* ); 
+      Room();
 
+      std::string name();
       void describe( Interface&);
   };
 

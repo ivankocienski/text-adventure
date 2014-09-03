@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <string>
 
 #include "interface.hh"
 
@@ -11,7 +12,10 @@ namespace ta {
   }
 
   void Interface::puts( const char *s ) {
+    cout << s << endl;
+  }
 
+  void Interface::puts( string &s ) { 
     cout << s << endl;
   }
 
