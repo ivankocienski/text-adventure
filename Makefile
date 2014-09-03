@@ -37,8 +37,10 @@ all: $(OBJECTS)
 #	$(CC) -c input_handler.cc $(CFLAGS)
 
 clean:
-	[ -e $(EXE) ] && rm $(EXE)
-	for obj in "$(OBJECTS)"; do [ -e $obj ] && rm $obj; done
+	[ -e $(EXE) ] && rm $(EXE) || true
+	rm *.o
 
+tags:
+	ctags *.cc *.hh
 
 

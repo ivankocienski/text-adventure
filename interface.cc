@@ -19,6 +19,13 @@ namespace ta {
     cout << s << endl;
   }
 
-  
+  void operator<<( Interface& i, char* p ) { 
+    i.puts(p);
+  }
+
+  void operator<<( Interface& i, std::string s ) { 
+    i.puts(s); 
+  }
+
 }; // namespace std
 

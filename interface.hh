@@ -16,5 +16,6 @@ namespace ta {
       void puts( std::string& );
   };
 
-  
+  void operator<<( Interface&, char* );
+  void operator<<( Interface&, std::string );
 }; // namespace ta;

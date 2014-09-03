@@ -21,7 +21,7 @@ namespace ta {
       Player m_player;
       World m_world;
 
-      void do_list();
+      void show_help();
 
     public:
 

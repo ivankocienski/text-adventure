@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "interface.hh"
+
 namespace ta {
 
   class World;
@@ -21,6 +23,8 @@ namespace ta {
     void start_in( std::string& );
     void start_in( char* );
     Room *current_room();
+
+    void describe(Interface&);
   };
 
 }; // namespace ta

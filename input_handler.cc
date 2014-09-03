@@ -19,7 +19,7 @@ namespace ta {
 
   void InputHandler::read() {
 
-    m_words.erase(m_words.begin(), m_words.end());
+    m_words.clear();
 
     string input;
 

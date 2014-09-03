@@ -26,7 +26,14 @@ namespace ta {
     run_room( ); 
   }
 
-
+  void Engine::show_help() {
+    cout << "ADVENTURE (v0)" << endl;
+    cout << "commands help:" << endl;
+    cout << "  quit - exit" << endl;
+    cout << "  list - list current rooms in world" << endl;
+    cout << "  describe - where you are" << endl;
+    cout << endl;
+  } 
 
   void Engine::run_room() {
 
@@ -38,8 +45,16 @@ namespace ta {
 
       m_input.read();
 
+      if(m_input.word(0) == "help") {
+        show_help();
+      }
+
       if(m_input.word(0) == "list") {
         m_world.list_rooms();
+      }
+
+      if(m_input.word(0) == "describe") {
+        m_player.describe( m_interface );
       }
 
       if(m_input.word(0) == "quit") break; 

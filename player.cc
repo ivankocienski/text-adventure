@@ -1,6 +1,7 @@
 
 #include <string>
 
+#include "interface.hh"
 #include "player.hh"
 #include "world.hh"
 #include "room.hh"
@@ -26,5 +27,9 @@ namespace ta {
 
   Room* Player::current_room() {
     return m_room;
+  }
+
+  void Player::describe( Interface &i ) {
+    m_room->describe(i);
   }
 }; // namespace ta;
