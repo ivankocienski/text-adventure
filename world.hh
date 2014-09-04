@@ -17,9 +17,10 @@ namespace ta {
   public:
     World();
 
-    void build_room( char*, char* );
+    void build_room( const std::string&, const std::string& );
     void list_rooms();
-    Room* get(std::string&);
+    void link_rooms( const std::string&, const std::string&,const std::string& );
+    Room* get(const std::string&);
   };
 
 }; // namespace ta

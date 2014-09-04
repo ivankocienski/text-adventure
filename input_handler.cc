@@ -61,6 +61,8 @@ namespace ta {
 
   string InputHandler::word(int i) {
 
+    if( i < 0 || i >= m_words.size() ) return string();
+
     return m_words[i];
 
   }

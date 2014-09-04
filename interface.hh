@@ -13,7 +13,7 @@ namespace ta {
       Interface();
 
       void puts( const char* );
-      void puts( std::string& );
+      void puts( const std::string& );
   };
 
   void operator<<( Interface&, char* );

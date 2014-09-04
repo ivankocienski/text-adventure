@@ -20,11 +20,11 @@ namespace ta {
     
     Player(World*);
 
-    void start_in( std::string& );
-    void start_in( char* );
+    void start_in( const std::string& );
     Room *current_room();
 
     void describe(Interface&);
+    void go(Interface&, const std::string& );
   };
 
 }; // namespace ta

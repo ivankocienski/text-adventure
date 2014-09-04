@@ -15,7 +15,7 @@ namespace ta {
     cout << s << endl;
   }
 
-  void Interface::puts( string &s ) { 
+  void Interface::puts( const string &s ) { 
     cout << s << endl;
   }
 

@@ -21,6 +21,8 @@ namespace ta {
 
     m_world.build_room( "bedroom", "cozy" );
 
+    m_world.link_rooms( "hallway", "north", "bedroom" );
+
     m_player.start_in( "hallway" );
 
     run_room( ); 
@@ -55,6 +57,10 @@ namespace ta {
 
       if(m_input.word(0) == "describe") {
         m_player.describe( m_interface );
+      }
+
+      if(m_input.word(0) == "go") {
+        m_player.go( m_interface, m_input.word(1) );
       }
 
       if(m_input.word(0) == "quit") break; 

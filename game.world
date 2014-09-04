@@ -1,0 +1,37 @@
+
+# something like this ...
+
+%NAME The adventure
+%AUTHOR Me
+%COPYRIGHT 1990
+
+%INCLUDE 'sub'
+
+# a comment
+
+%START dungeon
+
+%ROOM dungeon
+
+  %DESCRIBE
+    A dark and miserable place, not fit for mortals, or those who cling to their
+    mortality. Beware the darkest corners, for you never know what may pop up.
+  %ENDDESCRIBE
+
+  %EXIT north hall
+
+%ENDROOM
+
+
+%ROOM hall
+  
+  %DESCRIPTION
+    Large and open, high vaulted cielings. But a chill air blows through
+    this place. Some say it is the souls of the uncounted dead, bought to 
+    the shores of the afterlife by the artful performances of the resident
+    torturer.
+  %ENDDESCRIPTION
+
+  %EXIT south dungeon
+
+%ENDROOM
