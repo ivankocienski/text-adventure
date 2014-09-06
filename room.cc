@@ -4,12 +4,13 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
 namespace ta {
 
-  Room::Room( const string &n, const string &d ) : m_name(n), m_description(d) {
+  Room::Room( const string &n, const vector<string> &dl ) : m_name(n), m_description(dl) {
 
     m_exit_north = NULL;
     m_exit_south = NULL;
@@ -38,7 +39,11 @@ namespace ta {
       i.puts( sb.str() );
     }
 
-    i.puts(m_description);
+    vector<string>::iterator it;
+
+    for(it = m_description.begin(); it != m_description.end(); it++) {
+      i.puts(*it);
+    } 
     
     if(m_exit_north) {
       stringstream sb;

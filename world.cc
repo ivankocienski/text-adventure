@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 
 #include <stdlib.h>
 
@@ -15,8 +16,8 @@ namespace ta {
   World::World() {
   }
 
-  void World::build_room( const string &n, const string &d ) {
-    m_rooms[n] = Room(n, d);
+  void World::build_room( const string &n, const vector<string> &dl ) {
+    m_rooms[n] = Room(n, dl);
   }
 
   void World::list_rooms() {

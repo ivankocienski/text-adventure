@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+#include <vector>
+
 #include "room.hh"
 
 namespace ta {
@@ -21,9 +23,8 @@ namespace ta {
   public:
     World();
 
-    void build_room( const std::string&, const std::string& );
+    void build_room( const std::string&, const std::vector<std::string>& );
     void list_rooms();
-    //void link_rooms( const std::string&, const std::string&,const std::string& );
     Room* get(const std::string&);
 
     void set_name(      const std::string &);

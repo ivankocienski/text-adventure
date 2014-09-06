@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "interface.hh"
 
 namespace ta {
@@ -11,7 +12,7 @@ namespace ta {
     private:
 
       std::string m_name;
-      std::string m_description;
+      std::vector<std::string> m_description;
 
       Room *m_exit_north;
       Room *m_exit_south;
@@ -20,7 +21,7 @@ namespace ta {
 
     public:
 
-      Room( const std::string&, const std::string& ); 
+      Room( const std::string&, const std::vector<std::string>& ); 
       Room();
 
       std::string name();

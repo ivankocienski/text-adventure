@@ -240,8 +240,8 @@ namespace ta {
       room_t &r = (*ri).second;
 
       m_world.build_room(
-        r.name.parts.front(),
-        r.description.parts.front() // TODO: room descriptions as string lists
+        r.name.value(),
+        r.description.parts
       );
     }
 
