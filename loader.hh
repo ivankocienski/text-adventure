@@ -13,10 +13,12 @@ namespace ta {
   private:
 
     typedef struct decleration {
-      decleration() { assigned = false; }
-      std::list<std::string> parts;
+      std::vector<std::string> parts;
       size_t line; 
-      bool assigned;
+      bool   assigned;
+ 
+      decleration() { assigned = false; }
+      std::string& value() { return parts[0]; }
     } decleration_t;
 
     typedef struct global_s {
@@ -42,8 +44,8 @@ namespace ta {
     room_map_t m_rooms;
     
 
-    World  *m_ptr_world;
-    Player *m_ptr_player;
+    World  &m_world;
+    Player &m_player;
     int     m_warnings;
 
     enum read_state { 

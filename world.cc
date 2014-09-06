@@ -45,37 +45,50 @@ namespace ta {
     return &(*it).second;
   }
 
-  void World::link_rooms( const string& from, const string& dir, const string &to) {
+/*   void World::link_rooms( const string& from, const string& dir, const string &to) {
+ * 
+ *     Room *r1 = get( string(from) );
+ *     Room *r2 = get( string(to) );
+ * 
+ *     if( dir == "south" ) { 
+ *       r1->exit_south(r2);
+ *       r2->exit_north(r1); 
+ *       return;
+ *     }
+ * 
+ *     if( dir == "north" ) {
+ *       r1->exit_north(r2);
+ *       r2->exit_south(r1);
+ *       return; 
+ *     }
+ * 
+ *     if( dir == "east" ) {
+ *       r1->exit_east(r2);
+ *       r2->exit_west(r1);
+ *       return; 
+ *     }
+ * 
+ *     if( dir == "west" ) {
+ *       r1->exit_west(r2);
+ *       r2->exit_east(r1);
+ *       return; 
+ *     }
+ * 
+ *     cout << "World::link_rooms: did not understand direction '" << dir << "'" << endl;
+ * 
+ *   }
+ */
 
-    Room *r1 = get( string(from) );
-    Room *r2 = get( string(to) );
+  void World::set_name( const string &s ) {
+    m_name = s;
+  }
 
-    if( dir == "south" ) { 
-      r1->exit_south(r2);
-      r2->exit_north(r1); 
-      return;
-    }
+  void World::set_author( const string &s ) {
+    m_author = s;
+  }
 
-    if( dir == "north" ) {
-      r1->exit_north(r2);
-      r2->exit_south(r1);
-      return; 
-    }
-
-    if( dir == "east" ) {
-      r1->exit_east(r2);
-      r2->exit_west(r1);
-      return; 
-    }
-
-    if( dir == "west" ) {
-      r1->exit_west(r2);
-      r2->exit_east(r1);
-      return; 
-    }
-
-    cout << "World::link_rooms: did not understand direction '" << dir << "'" << endl;
-
+  void World::set_copyright( const string &s ) {
+    m_copyright = s;
   }
 
 }; // namespace ta

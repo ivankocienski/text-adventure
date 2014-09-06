@@ -13,7 +13,7 @@ using namespace std;
 
 namespace ta { 
 
-  Loader::Loader( World& w, Player& p) : m_ptr_world(&w), m_ptr_player(&p) { 
+  Loader::Loader( World& w, Player& p) : m_world(w), m_player(p) { 
     m_warnings = 0;
   }
 
@@ -29,8 +29,10 @@ namespace ta {
       return; 
     }
 
+    t.parts.resize( sm.size() - 1 );
+
     for(size_t i = 1; i < sm.size(); i++) 
-      t.parts.push_back( sm[i].str() );
+      t.parts[i - 1] = sm[i].str();
 
     t.line     = line;
     t.assigned = true;
@@ -229,47 +231,56 @@ namespace ta {
 
   void Loader::upload() {
 
-    m_world->name      = m_globals.name.parts[0];
-    m_world->author    = m_globals.author.parts[0];
-    m_world->copyright = m_globals.copyright.parts[0];
+    m_world.set_name(      m_globals.name.parts.front() );
+    m_world.set_author(    m_globals.author.parts.front() );
+    m_world.set_copyright( m_globals.copyright.parts.front() );
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
-      decleration_t &dec = ri.second;
+      room_t &r = (*ri).second;
 
-      m_world->build_room(
-        dec.name.parts[0],
-        dec.descroption.parts[0] 
+      m_world.build_room(
+        r.name.parts.front(),
+        r.description.parts.front() // TODO: room descriptions as string lists
       );
     }
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
-      decleration_t &dec = ri.second;
+      room_t &rd = (*ri).second;
 
-      if( dec.exit_north.assigned ) {
+      Room *r = m_world.get( rd.name.value() );
 
+      if( rd.exit_north.assigned ) {
+        Room *other = m_world.get( rd.exit_north.parts[1] );
+        r->exit_north( other );
+        continue; 
       }
 
-      if( dec.exit_south.assigned ) {
-
+      if( rd.exit_south.assigned ) {
+        Room *other = m_world.get( rd.exit_south.parts[1] );
+        r->exit_south( other );
+        continue; 
       }
 
-      if( dec.exit_east.assigned ) {
-
+      if( rd.exit_east.assigned ) {
+        Room *other = m_world.get( rd.exit_east.parts[1] );
+        r->exit_east( other );
+        continue; 
       }
 
-      if( dec.exit_west.assigned ) {
-        
+      if( rd.exit_west.assigned ) {
+        Room *other = m_world.get( rd.exit_west.parts[1] );
+        r->exit_west( other );
+        continue; 
       }
 
-      moan( dec.name.line, "no exits defined in room" );
+      moan( rd.name.line, "no exits defined in room" );
     }
 
-    m_player->start_in();
+    Room *r = m_world.get( m_globals.start.value() );
 
-
-    
+    m_player.start_in(r); 
   }
 
   void Loader::read( const string &fn ) {

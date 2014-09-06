@@ -15,8 +15,8 @@ namespace ta {
     m_world = w;
   }
 
-  void Player::start_in(const string& w) {
-    m_room = m_world->get(w); 
+  void Player::start_in( Room *r ) {
+    m_room = r;
   }
 
   Room* Player::current_room() {

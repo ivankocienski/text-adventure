@@ -20,7 +20,7 @@ namespace ta {
     
     Player(World*);
 
-    void start_in( const std::string& );
+    void start_in( Room* );
     Room *current_room();
 
     void describe(Interface&);
