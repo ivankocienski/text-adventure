@@ -25,13 +25,14 @@
 
 %ROOM hall
   
-  %DESCRIPTION
-    Large and open, high vaulted cielings. But a chill air blows through
+  %DESCRIBE
+    Large and open, high vaulted ceilings. But a chill air blows through
     this place. Some say it is the souls of the uncounted dead, bought to 
     the shores of the afterlife by the artful performances of the resident
     torturer.
-  %ENDDESCRIPTION
+  %ENDDESCRIBE
 
+  # this could get complicated...
   %EXIT south dungeon
 
 %ENDROOM

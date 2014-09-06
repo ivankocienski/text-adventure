@@ -3,6 +3,7 @@
 #include <map>
 #include <iostream>
 
+#include "loader.hh"
 #include "engine.hh"
 #include "room.hh"
 #include "input_handler.hh"
@@ -17,14 +18,19 @@ namespace ta {
 
   void Engine::run() {
 
-    m_world.build_room( "hallway", "a room of doom" );
+    Loader loader( m_world, m_player );
 
-    m_world.build_room( "bedroom", "cozy" );
+    loader.read( "game.world" );
 
-    m_world.link_rooms( "hallway", "north", "bedroom" );
-
-    m_player.start_in( "hallway" );
-
+/*     m_world.build_room( "hallway", "a room of doom" );
+ * 
+ *     m_world.build_room( "bedroom", "cozy" );
+ * 
+ *     m_world.link_rooms( "hallway", "north", "bedroom" );
+ * 
+ *     m_player.start_in( "hallway" );
+ * 
+ */
     run_room( ); 
   }
 

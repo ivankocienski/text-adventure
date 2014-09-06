@@ -1,7 +1,7 @@
 
 CC=g++
-CFLAGS=-Wall -g
-LFLAGS=-g
+CFLAGS=-Wall -g # -std=c++11
+LFLAGS=-g -std=c++11 -lboost_regex
 
 EXE=adventure
 SOURCES= \
@@ -11,7 +11,8 @@ SOURCES= \
 	interface.cc \
 	input_handler.cc \
 	player.cc \
-	world.cc
+	world.cc \
+	loader.cc
 
 OBJECTS= $(patsubst %.cc,%.o,$(SOURCES)) 
 
@@ -20,21 +21,6 @@ all: $(OBJECTS)
 
 .cc.o:
 	$(CC) -c $< $(CFLAGS)
-
-#engine.o: engine.cc
-#	$(CC) -c engine.cc $(CFLAGS)
-#
-#main.o: main.cc
-#	$(CC) -c main.cc $(CFLAGS)
-#
-#room.o: room.cc
-#	$(CC) -c room.cc $(CFLAGS)
-#
-#interface.o: interface.cc
-#	$(CC) -c interface.cc $(CFLAGS)
-#
-#input_handler.o: input_handler.cc
-#	$(CC) -c input_handler.cc $(CFLAGS)
 
 clean:
 	[ -e $(EXE) ] && rm $(EXE) || true
