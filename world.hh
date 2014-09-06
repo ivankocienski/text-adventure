@@ -30,6 +30,8 @@ namespace ta {
     void set_name(      const std::string &);
     void set_author(    const std::string &);
     void set_copyright( const std::string &);
+
+    void introduce(Interface&);
   };
 
 }; // namespace ta

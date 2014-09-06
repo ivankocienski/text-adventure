@@ -22,28 +22,23 @@ namespace ta {
 
     loader.read( "game.world" );
 
-/*     m_world.build_room( "hallway", "a room of doom" );
- * 
- *     m_world.build_room( "bedroom", "cozy" );
- * 
- *     m_world.link_rooms( "hallway", "north", "bedroom" );
- * 
- *     m_player.start_in( "hallway" );
- * 
- */
-    run_room( ); 
+    m_world.introduce(m_interface);
+
+    input_loop();
   }
 
   void Engine::show_help() {
-    cout << "ADVENTURE (v0)" << endl;
-    cout << "commands help:" << endl;
-    cout << "  quit - exit" << endl;
-    cout << "  list - list current rooms in world" << endl;
-    cout << "  describe - where you are" << endl;
-    cout << endl;
+
+    cout 
+      << "ADVENTURE (v0)" << endl
+      << "commands help:" << endl
+      << "  quit - exit" << endl
+      << "  list - list current rooms in world" << endl
+      << "  describe - where you are" << endl
+      << endl;
   } 
 
-  void Engine::run_room() {
+  void Engine::input_loop() {
 
     Room *room = m_player.current_room();
 
@@ -57,6 +52,10 @@ namespace ta {
         show_help();
       }
 
+      if(m_input.word(0) == "intro") {
+        m_world.introduce(m_interface);
+      }
+
       if(m_input.word(0) == "list") {
         m_world.list_rooms();
       }
@@ -67,6 +66,7 @@ namespace ta {
 
       if(m_input.word(0) == "go") {
         m_player.go( m_interface, m_input.word(1) );
+        m_player.describe( m_interface );
       }
 
       if(m_input.word(0) == "quit") break; 

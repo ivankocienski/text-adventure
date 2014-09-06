@@ -23,13 +23,13 @@ namespace ta {
 
       void show_help();
 
+      void input_loop( );
+
     public:
 
       Engine();
       void run();
 
-      void build_room( char *, char * );
-      void run_room( );
 
       
   };
