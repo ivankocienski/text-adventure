@@ -48,10 +48,11 @@ namespace ta {
     boost::regex     include_r( "^%INCLUDE\\s+(.+)" );
     boost::regex       start_r( "^%START\\s+(.+)" );
     boost::regex        room_r( "^%ROOM\\s+(.+)" );
-    boost::regex    describe_r( "^%DESCRIBE" );
+    boost::regex    describe_r( "^%DESCRIBE\\b" );
     boost::regex        exit_r( "^%EXIT\\s+(\\w+)\\s+(\\w+)" );
-    boost::regex enddescribe_r( "^%ENDDESCRIBE" );
-    boost::regex     endroom_r( "^%ENDROOM" );
+    boost::regex enddescribe_r( "^%ENDDESCRIBE\\b" );
+    boost::regex     endroom_r( "^%ENDROOM\\b" );
+    boost::regex        item_r( "^%ITEM\\s+(\\w+)" );
     boost::smatch capture;
 
     string current_room;
@@ -90,12 +91,6 @@ namespace ta {
           moan( line_num, "command found in DESCRIBE block is not ENDDESCRIBE" );
           continue; 
         }
-
-/*         if( !m_rooms[current_room].description.assigned ) {
- *           m_rooms[current_room].description.assigned = true;
- *           m_rooms[current_room].description.line = line_num;
- *         }
- */
 
         m_rooms[current_room].description.parts.push_back( line );
 
@@ -164,6 +159,18 @@ namespace ta {
             } else {
               set_decleration( m_rooms[current_room].description, capture, line_num );
               state = RS_DESCRIPTION;
+            }
+
+            continue; 
+          }
+
+          if( boost::regex_match(line, capture, item_r ) ) {
+            if( state == RS_TOPLEVEL ) {
+              moan( line_num, "unexpected ITEM keyword" ); 
+            } else {
+              string name = capture[1].str();
+
+              set_decleration( m_rooms[current_room].items[name], capture, line_num );
             }
 
             continue; 
@@ -250,6 +257,12 @@ namespace ta {
       room_t &rd = (*ri).second;
 
       Room *r = m_world.get( rd.name.value() );
+
+      for( decleration_map_t::iterator it = rd.items.begin(); it != rd.items.end(); it++ ) {
+
+        decleration_t &id = (*it).second;
+        r->place_item( id.value() );
+      }
 
       if( rd.exit_north.assigned ) {
         Room *other = m_world.get( rd.exit_north.parts[1] );

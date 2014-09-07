@@ -13,6 +13,7 @@ namespace ta {
 
       std::string m_name;
       std::vector<std::string> m_description;
+      std::vector<std::string> m_items;
 
       Room *m_exit_north;
       Room *m_exit_south;
@@ -31,6 +32,10 @@ namespace ta {
       void exit_south( Room* );
       void exit_east( Room* );
       void exit_west( Room* );
+
+      void place_item(   const std::string& );
+      bool has_item(     const std::string& );
+      void discard_item( const std::string& );
 
 
       Room* get_north_exit();

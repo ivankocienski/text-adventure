@@ -3,8 +3,8 @@
 " Maintainer: Me
 " Latest Revision: 5th September 2014
 
-syn keyword worldCommand %NAME %AUTHOR %COPYRIGHT %INCLUDE %START 
-syn keyword worldCommand %ROOM %DESCRIBE %ENDDESCRIBE %EXIT %ENDROOM
+syn keyword worldCommand NAME AUTHOR COPYRIGHT INCLUDE START 
+syn keyword worldCommand ROOM DESCRIBE ENDDESCRIBE EXIT ENDROOM ITEM
 
 syn match worldComment "#.*$"
 

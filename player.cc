@@ -1,6 +1,7 @@
 
 #include <string>
-#include <sstream>
+#include <vector>
+#include <algorithm>
 
 #include "interface.hh"
 #include "player.hh"
@@ -86,11 +87,56 @@ namespace ta {
       return; 
     }
 
-    stringstream ss;
+    i.puts( "I do not know direction '" + dir + "'" );
+  }
 
-    ss << "I do not know direction '" << dir << "'";
+  void Player::show_holding( Interface &i ) {
 
-    i.puts( ss.str() );
+    if( m_holding.size() == 0 ) {
+      i.puts( "You are not holding anything" );
+      return;
+    }
+
+    vector<string>::iterator it;
+
+    i.puts( "You are holding" );
+    for( it = m_holding.begin(); it != m_holding.end(); it++ ) {
+      i.puts( "  " + *it ); 
+    }
+  }
+
+  void Player::pickup( Interface &i, const string &what ) {
+
+    if( !m_room->has_item( what ) ) {
+      i.puts( "could not find '" + what + "' to pick up" );
+      return;
+    }
+
+    m_room->discard_item( what ); 
+
+    m_holding.push_back( what );
+  }
+
+  void Player::putdown( Interface &i, const string &what ) {
+
+    if( what == "" ) {
+      i.puts( "Pick up what, sir?" );
+      return;
+    }
+
+    vector<string>::iterator it;
+
+    it = find( m_holding.begin(), m_holding.end(), what );
+
+    if( it == m_holding.end() ) {
+      i.puts( "You are not holding that" );
+      return;
+    }
+
+    m_holding.erase( it );
+
+    m_room->has_item( what );
+
   }
 
 }; // namespace ta;

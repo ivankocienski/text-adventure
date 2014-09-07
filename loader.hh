@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <boost/regex.hpp>
 
 #include "world.hh"
@@ -21,6 +22,8 @@ namespace ta {
       std::string& value() { return parts[0]; }
     } decleration_t;
 
+    typedef std::map<std::string, decleration_t> decleration_map_t;
+
     typedef struct global_s {
       decleration_t name;
       decleration_t author;
@@ -36,6 +39,8 @@ namespace ta {
       decleration_t exit_south;
       decleration_t exit_east;
       decleration_t exit_west; 
+
+      decleration_map_t items;
     } room_t, *p_room_t;
 
     typedef std::map<std::string, room_t> room_map_t;

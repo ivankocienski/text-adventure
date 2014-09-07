@@ -16,6 +16,8 @@ namespace ta {
     World *m_world;
     Room  *m_room;
 
+    std::vector<std::string> m_holding;
+
   public:
     
     Player(World*);
@@ -25,6 +27,10 @@ namespace ta {
 
     void describe(Interface&);
     void go(Interface&, const std::string& );
+    void show_holding( Interface& );
+
+    void pickup( Interface&, const std::string& );
+    void putdown( Interface&, const std::string& );
   };
 
 }; // namespace ta

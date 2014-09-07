@@ -12,9 +12,11 @@ SOURCES= \
 	input_handler.cc \
 	player.cc \
 	world.cc \
-	loader.cc
+	loader.cc \
+	item.cc
 
 OBJECTS= $(patsubst %.cc,%.o,$(SOURCES)) 
+HEADERS= $(patsubst %.cc,%.hh,$(SOURCES)) 
 
 all: $(OBJECTS)
 	$(CC) -o $(EXE) $(LFLAGS) $(OBJECTS)

@@ -3,8 +3,8 @@
 #include "interface.hh"
 
 #include <string>
-#include <sstream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -33,11 +33,7 @@ namespace ta {
 
   void Room::describe( Interface &i ) {
 
-    {
-      stringstream sb;
-      sb << "You are standing in " << m_name;
-      i.puts( sb.str() );
-    }
+    i.puts( "You are standing in " + m_name );
 
     vector<string>::iterator it;
 
@@ -46,29 +42,52 @@ namespace ta {
     } 
     
     if(m_exit_north) {
-      stringstream sb;
-      sb << "To the north there is " << m_exit_north->m_name;
-      i.puts( sb.str() );
+      i.puts( "To the north there is " + m_exit_north->m_name );
     }
 
     if(m_exit_east) {
-      stringstream sb;
-      sb << "To the east there is " << m_exit_east->m_name;
-      i.puts( sb.str() );
+      i.puts( "To the east there is " + m_exit_east->m_name );
     }
 
     if(m_exit_south) {
-      stringstream sb;
-      sb << "To the south there is " << m_exit_south->m_name;
-      i.puts( sb.str() );
+      i.puts( "To the south there is " + m_exit_south->m_name );
     }
 
     if(m_exit_west) {
-      stringstream sb;
-      sb << "To the west there is " << m_exit_west->m_name;
-      i.puts( sb.str() );
+      i.puts( "To the west there is " + m_exit_west->m_name );
+    }
+
+    if(m_items.size() ) {
+      i.puts( "In room you can see" );
+      for(it = m_items.begin(); it != m_items.end(); it++ ) {
+        i.puts( "  " + *it );
+      }
     }
     
+  }
+
+  void Room::place_item( const string &s ) {
+    m_items.push_back(s);
+  }
+
+  bool Room::has_item( const string &s ) {
+    vector<string>::iterator it;
+
+    it = find( m_items.begin(), m_items.end(), s ); 
+
+    return it != m_items.end();
+  }
+
+  void Room::discard_item( const string &s ) {
+
+    vector<string>::iterator it;
+
+    it = find( m_items.begin(), m_items.end(), s );
+
+    if( it == m_items.end() )
+      return;
+
+    m_items.erase(it);
   }
 
   void Room::exit_north( Room* r ) {
