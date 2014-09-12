@@ -139,4 +139,8 @@ namespace ta {
 
   }
 
+  void Player::use_item(Interface &i, const string &what ) {
+
+  }
+
 }; // namespace ta;

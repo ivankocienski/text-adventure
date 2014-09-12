@@ -5,8 +5,6 @@
 %AUTHOR Me
 %COPYRIGHT 1990
 
-%INCLUDE 'sub'
-
 # a comment
 
 %START dungeon

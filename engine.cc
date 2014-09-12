@@ -20,7 +20,7 @@ namespace ta {
 
     Loader loader( m_world, m_player );
 
-    loader.read( "game.world" );
+    loader.parse( "game.world" );
 
     m_world.introduce(m_interface);
 
@@ -65,7 +65,7 @@ namespace ta {
       }
 
       if(m_input.word(0) == "use" ) {
-        m_player.use_item( m_interface, m_interface.word(1) );
+        m_player.use_item( m_interface, m_input.word(1) );
       }
 
 

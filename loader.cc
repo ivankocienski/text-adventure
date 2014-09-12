@@ -1,5 +1,5 @@
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <string>
 #include <fstream>
@@ -17,224 +17,180 @@ namespace ta {
     m_warnings = 0;
   }
 
-  void Loader::moan( size_t l, const std::string& r ) {
-    cerr << "warning: (line " << l << ") " << r << endl;
+  void Loader::moan( const Parser &p, const string& r ) {
+    cerr << "warning: (line " << p.line_number() << ") " << r << endl;
     m_warnings++;
   }
 
-  void Loader::set_decleration( decleration_t &t, boost::smatch &sm, size_t line ) {
+  void Loader::moan( const decleration_t& d, const string& r ) {
+    cerr << "warning: (line " << d.line << ") " << r << endl;
+    m_warnings++;
+  }
+
+  void Loader::set_decleration( decleration_t &t, const Parser &p ) {
 
     if( t.assigned ) { 
-      moan( line, "assignment already assigned" );
+      string msg;
+
+      msg = "assignment already assigned (see line ";
+      msg += t.line;
+      msg += ")";
+
+      moan( p, msg );
       return; 
     }
 
-    t.parts.resize( sm.size() - 1 );
-
-    for(size_t i = 1; i < sm.size(); i++) 
-      t.parts[i - 1] = sm[i].str();
-
-    t.line     = line;
+    t.parts    = p.matches(); 
+    t.line     = p.line_number();
     t.assigned = true;
   }
 
-  void Loader::parse( const string &fn ) { 
+  void Loader::parse_room_describe( decleration_t &desc, Parser &parser ) {
 
-    // not the best way to write a parser, but hey...
-    boost::regex       blank_r( "^\\s*$" );
-    boost::regex        name_r( "^%NAME\\s+(.+)" );
-    boost::regex      author_r( "^%AUTHOR\\s+(.+)" );
-    boost::regex   copyright_r( "^%COPYRIGHT\\s+(.+)" );
-    boost::regex     include_r( "^%INCLUDE\\s+(.+)" );
-    boost::regex       start_r( "^%START\\s+(.+)" );
-    boost::regex        room_r( "^%ROOM\\s+(.+)" );
-    boost::regex    describe_r( "^%DESCRIBE\\b" );
-    boost::regex        exit_r( "^%EXIT\\s+(\\w+)\\s+(\\w+)" );
-    boost::regex enddescribe_r( "^%ENDDESCRIBE\\b" );
-    boost::regex     endroom_r( "^%ENDROOM\\b" );
-    boost::regex        item_r( "^%ITEM\\s+(\\w+)" );
-    boost::smatch capture;
+    set_decleration( desc, parser );
 
-    string current_room;
+    while( true ) {
 
-    ifstream file( fn.c_str() );
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in DESCRIBE" );
+          return;
 
-    string line;
-    int line_num = 0;
+        case Parser::TT_STRING:
+          desc.parts.push_back( parser.line() );
+          break;
 
-    read_state state = RS_TOPLEVEL;
+        case Parser::TT_TOKEN:
+          switch( parser.token_code() ) {
 
-    while(!file.eof()) {
+            case TC_ENDDESCRIBE:
+              return;
 
-      line_num++;
+            default:
+              moan( parser, "bad token at DESCRIBE" );
+              break;
+          }
 
-      getline(file, line);
-
-      string::size_type start = line.find_first_not_of( " \t\n\r" );
-
-      if( start != string::npos && start > 0 ) {
-        line.erase(0, start); 
+          break;
       }
+    }
+  }
 
-      if(boost::regex_match( line, capture, blank_r) ) continue;
-      if(line[0] == '#') continue;
+  void Loader::parse_room( Parser &parser ) {
 
-      if( state == RS_DESCRIPTION ) {
+    room_t &room = m_rooms[ parser.first_match() ];
 
-        if( line[0] == '%' ) {
+    set_decleration( room.name, parser );
 
-          if( boost::regex_match(line, capture, enddescribe_r ) ) {
-            state = RS_ROOM;
-            continue;
-          }
+    while( true ) {
 
-          moan( line_num, "command found in DESCRIBE block is not ENDDESCRIBE" );
-          continue; 
-        }
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in ROOM" );
+          return;
 
-        m_rooms[current_room].description.parts.push_back( line );
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string in ROOM" );
+          break;
 
-      } else {
-
-        if(line[0] == '%') {
-
-          if( boost::regex_match(line, capture, name_r) ) {
-            if( state == RS_TOPLEVEL )
-              set_decleration( m_globals.name, capture, line_num );
-            else
-              moan( line_num, "unexpected NAME keyword" );
-            continue;
-          }
-
-          if( boost::regex_match(line, capture, author_r ) ) {
-            if( state == RS_TOPLEVEL ) 
-              set_decleration( m_globals.author, capture, line_num );
-            else
-              moan( line_num, "unexpected AUTHOR keyword" ); 
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, copyright_r ) ) {
-            if( state == RS_TOPLEVEL ) 
-              set_decleration( m_globals.copyright, capture, line_num );
-            else
-              moan( line_num, "unexpected COPYRIGHT keyword" ); 
-
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, include_r ) ) {
-            //TODO: ignore these until implemented
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, start_r ) ) {
-            if( state == RS_TOPLEVEL ) 
-              set_decleration( m_globals.start, capture, line_num );
-            else
-              moan( line_num, "unexpected START keyword" ); 
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, room_r ) ) {
-            if( state == RS_TOPLEVEL ) {
-
-              room_t load_room;
-              string name = capture[1].str();
-
-              set_decleration( m_rooms[name].name, capture, line_num );
-
-              current_room = name; 
-              state        = RS_ROOM;
-
-            } else
-              moan( line_num, "unexpected START keyword" ); 
-
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, describe_r ) ) {
-            if( state == RS_TOPLEVEL ) {
-              moan( line_num, "unexpected DESCRIBE keyword" ); 
-            } else {
-              set_decleration( m_rooms[current_room].description, capture, line_num );
-              state = RS_DESCRIPTION;
-            }
-
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, item_r ) ) {
-            if( state == RS_TOPLEVEL ) {
-              moan( line_num, "unexpected ITEM keyword" ); 
-            } else {
-              string name = capture[1].str();
-
-              set_decleration( m_rooms[current_room].items[name], capture, line_num );
-            }
-
-            continue; 
-          }
-
-          if( boost::regex_match(line, capture, exit_r ) ) {
-            if( state == RS_TOPLEVEL ) {
-              moan( line_num, "unexpected EXIT keyword" ); 
-            } else {
-
-              if( capture[1].str() == "north" ) {
-                set_decleration( m_rooms[current_room].exit_north, capture, line_num);
-                continue; 
-              }
-
-              if( capture[1].str() == "south" ) {
-                set_decleration( m_rooms[current_room].exit_south, capture, line_num);
-                continue; 
-
-              }
-
-              if( capture[1].str() == "east" ) {
-                set_decleration( m_rooms[current_room].exit_east, capture, line_num);
-                continue; 
-
-              }
-
-              if( capture[1].str() == "west" ) {
-                set_decleration( m_rooms[current_room].exit_west, capture, line_num);
-                continue; 
-                
-              }
-
-              moan( line_num, "EXIT has unknown direction. Should be one of north, south, east or west" );
+        case Parser::TT_TOKEN: 
+          {
+          switch( parser.token_code() ) {
               
-            }
+            case TC_ENDROOM:
+              return;
 
-            continue; 
+            case TC_EXIT: {
+
+              string dir = parser.first_match();
+              if( dir == "north" )
+                set_decleration( room.exit_north, parser );
+              else
+              //
+              if( dir == "south" )
+                set_decleration( room.exit_south, parser );
+              else
+              //
+              if( dir == "east" )
+                set_decleration( room.exit_east, parser );
+              else
+              //
+              if( dir == "west" )
+                set_decleration( room.exit_west, parser );
+              //
+              else
+                moan( parser, "unknown direction for exit in ROOM" );
+
+              } break;
+              
+            case TC_ITEM:
+              set_decleration( room.items[ parser.first_match() ], parser ); 
+              break;
+
+            case TC_DESCRIBE:
+              parse_room_describe( room.description, parser );
+              break;
+
+            default:
+              moan( parser, "bad token at ROOM" );
+              break;
           }
 
-          if( boost::regex_match(line, capture, enddescribe_r ) ) {
-            moan( line_num, "unexpected ENDDESCRIBE keyword" ); 
-            continue; 
+          break;
           }
 
-          if( boost::regex_match(line, capture, endroom_r ) ) {
-            if( state == RS_TOPLEVEL ) {
-              moan( line_num, "unexpected ENDROOM keyword" ); 
-            } else {
-              state        = RS_TOPLEVEL;
-              current_room = "";
-            }
+      }
+    }
 
-            continue; 
+
+  }
+
+  void Loader::parse_toplevel( Parser &parser ) {
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          return;
+
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string" );
+          break;
+
+        case Parser::TT_TOKEN:
+
+          switch( parser.token_code() ) {
+
+            case TC_NAME:
+              set_decleration( m_globals.name, parser );
+              break;
+              
+            case TC_AUTHOR:
+              set_decleration( m_globals.author, parser );
+              break;
+
+            case TC_COPYRIGHT:
+              set_decleration( m_globals.copyright, parser );
+              break;
+
+            case TC_START:
+              set_decleration( m_globals.start, parser );
+              break;
+
+            case TC_ROOM:
+              parse_room( parser );
+              break;
+
+            default:
+              moan( parser, "bad token at toplevel" );
+              break;
           }
 
-          moan( line_num, "unknown or misspelled command given, ignoring." );
-          continue;
-        }
-
-        moan( line_num, "syntax error" ); 
+          break;
       } 
     } 
   }
+
 
   void Loader::upload() {
 
@@ -288,7 +244,7 @@ namespace ta {
         continue; 
       }
 
-      moan( rd.name.line, "no exits defined in room" );
+      moan( rd.name, "no exits defined in room" );
     }
 
     Room *r = m_world.get( m_globals.start.value() );
@@ -296,9 +252,23 @@ namespace ta {
     m_player.start_in(r); 
   }
 
-  void Loader::read( const string &fn ) {
+  void Loader::parse( const string &fn ) {
 
-    parse( fn );
+    Parser parser( fn );
+
+    // not the best way to write a parser, but hey...
+    parser.define_matcher( TC_NAME,        "^%NAME\\s+(.+)" );
+    parser.define_matcher( TC_AUTHOR,      "^%AUTHOR\\s+(.+)" );
+    parser.define_matcher( TC_COPYRIGHT,   "^%COPYRIGHT\\s+(.+)" );
+    parser.define_matcher( TC_START,       "^%START\\s+(.+)" );
+    parser.define_matcher( TC_ROOM,        "^%ROOM\\s+(.+)" );
+    parser.define_matcher( TC_DESCRIBE,    "^%DESCRIBE\\b" );
+    parser.define_matcher( TC_EXIT,        "^%EXIT\\s+(\\w+)\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDDESCRIBE, "^%ENDDESCRIBE\\b" );
+    parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
+    parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
+
+    parse_toplevel( parser );
 
     if(m_warnings) {
       cerr << "there where " << m_warnings << " warnings." << endl;
@@ -307,5 +277,101 @@ namespace ta {
 
     upload();
   }
+
+
+  /****************\
+   *              *
+   *  the parser  *
+   *              * 
+  \****************/
+
+  Loader::Parser::Parser( const std::string &fn ) : 
+    m_line_number(0),
+    m_file( fn.c_str() ),
+    m_blank_r( "^\\s*$" ) { }
+
+  Loader::Parser::token_type Loader::Parser::next_token() {
+
+    m_token_code = -1;
+
+    string::size_type start;
+
+    while(true) {
+
+      if(m_file.eof()) 
+        return TT_EOF;
+
+      m_line_number++; 
+      getline( m_file, m_line );
+
+      // ignore leading whitespace
+      start = m_line.find_first_not_of( " \t\n\r" );
+      if( start != string::npos && start > 0 ) {
+        m_line.erase(0, start); 
+      }
+
+      // blank line
+      if(boost::regex_match( m_line, m_capture, m_blank_r) ) continue;
+
+      // comment line
+      if(m_line[0] == '#') continue;
+
+      // assume its a command
+      if(m_line[0] == '%') return TT_TOKEN;
+
+      break;
+    }
+
+    return TT_STRING; 
+  }
+
+  void Loader::Parser::define_matcher( int code, const string &p ) {
+
+    matcher_t m;
+
+    m.return_code = code;
+    m.pattern     = boost::regex( p );
+
+    m_matchers.push_back(m);
+  }
+
+  int Loader::Parser::token_code() {
+
+    list<matcher_t>::iterator it;
+
+    for( it = m_matchers.begin(); it != m_matchers.end(); it++ ) {
+
+      if( boost::regex_match( m_line, m_capture, (*it).pattern ) ) {
+        return (*it).return_code;
+      } 
+    }
+
+    return -1;
+  }
+
+  int Loader::Parser::line_number() const {
+    return m_line_number;
+  }
+
+  string Loader::Parser::line() const {
+    return m_line;
+  }
+
+  vector<string> Loader::Parser::matches() const {
+
+    vector<string> vs;
+
+    vs.resize( m_capture.size() - 1 );
+    for( size_t i = 1; i < m_capture.size(); i++) {
+      vs[i - 1] = m_capture[i]; 
+    }
+
+    return vs;
+  }
+
+  string Loader::Parser::first_match() const {
+    return m_capture[1];
+  }
+
 
 }; // namespace ta

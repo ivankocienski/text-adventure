@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+#include <fstream>
+#include <list>
 #include <boost/regex.hpp>
 
 #include "world.hh"
@@ -12,6 +14,48 @@ namespace ta {
   
   class Loader {
   private:
+
+    class Parser {
+      public:
+
+        enum token_type {
+          TT_TOKEN,
+          TT_EOF,
+          TT_STRING
+        };
+
+      private:
+
+        typedef struct matcher_s {
+          int return_code;
+          boost::regex pattern; 
+        } matcher_t;
+
+        int m_line_number;
+        int m_token_code;
+
+        std::ifstream        m_file;
+        boost::regex         m_blank_r;
+        std::string          m_line;
+        std::list<matcher_t> m_matchers;
+        boost::smatch        m_capture;
+        
+      public:
+
+        Parser( const std::string& );
+
+        void define_matcher( int, const std::string& );
+
+        token_type next_token();
+        int token_code();
+
+        std::vector<std::string> matches() const;
+        std::string first_match() const;
+        std::string line() const;
+
+        int line_number() const;
+
+    };
 
     typedef struct decleration {
       std::vector<std::string> parts;
@@ -53,22 +97,34 @@ namespace ta {
     Player &m_player;
     int     m_warnings;
 
-    enum read_state { 
-      RS_TOPLEVEL,
-      RS_ROOM,
-      RS_DESCRIPTION 
+
+    enum token_code {
+      TC_NAME,
+      TC_AUTHOR,
+      TC_COPYRIGHT,
+      TC_START,
+      TC_ROOM,
+      TC_ENDROOM,
+      TC_DESCRIBE,
+      TC_ENDDESCRIBE,
+      TC_EXIT,
+      TC_ITEM
     };
 
-    void moan( size_t, const std::string& );
-    void set_decleration( decleration_t&, boost::smatch&, size_t);
+    void moan( const Parser&, const std::string& );
+    void moan( const decleration_t&, const std::string& );
 
-    void parse( const std::string& ); 
+    void set_decleration( decleration_t&, const Parser& );
+
+    void parse_room_describe( decleration_t&, Parser& );
+    void parse_room( Parser& );
+    void parse_toplevel( Parser& );
     void upload();
 
   public:
     Loader( World&, Player& );
 
-    void read( const std::string& );
+    void parse( const std::string& ); 
   };
 
 }; // namespace ta
