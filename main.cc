@@ -1,16 +1,13 @@
 
-#include <iostream>
-
+#include "interface.hh"
 #include "engine.hh"
-
-using namespace std;
 
 int main( int argc, char ** argv ) {
 
-  ta::Engine engine;
+  ta::Interface interface;
+  interface.init( 640, 480 );
 
-  cout << "TEXT ADVENTURE (v0) " << endl << endl;
-
+  ta::Engine engine(interface);
   engine.run();
 
   return 0;

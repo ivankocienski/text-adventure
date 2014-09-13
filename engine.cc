@@ -1,4 +1,5 @@
 
+#include <cstdlib>
 #include <string>
 #include <map>
 #include <iostream>
@@ -6,25 +7,22 @@
 #include "loader.hh"
 #include "engine.hh"
 #include "room.hh"
-#include "input_handler.hh"
 #include "interface.hh"
 
 using namespace std;
 
 namespace ta {
 
-  Engine::Engine() : m_player( &m_world ) {
-  }
+  Engine::Engine(Interface &i) : m_interface(i), m_player( &m_world ) {
 
-  void Engine::run() {
-
-    Loader loader( m_world, m_player );
+    Loader loader( &m_world, &m_player );
 
     loader.parse( "game.world" );
+  }
+
+  void Engine::announce() {
 
     m_world.introduce(m_interface);
-
-    input_loop();
   }
 
   void Engine::show_help() {
@@ -38,56 +36,55 @@ namespace ta {
       << endl;
   } 
 
-  void Engine::input_loop() {
+  void Engine::handle_input() {
 
-    Room *room = m_player.current_room();
+    if(m_interface.word(0) == "help") {
+      show_help();
+    }
 
-    room->describe(m_interface);
+    if(m_interface.word(0) == "holding" ) {
+      m_player.show_holding(m_interface);
+    }
 
-    while( true ) {
+    if(m_interface.word(0) == "pickup" ) {
+      m_player.pickup( m_interface );
+    }
 
-      m_input.read();
+    if(m_interface.word(0) == "putdown" ) {
+      m_player.putdown( m_interface );
+    }
 
-      if(m_input.word(0) == "help") {
-        show_help();
-      }
+    if(m_interface.word(0) == "use" ) {
+      m_player.use_item( m_interface );
+    } 
 
-      if(m_input.word(0) == "holding" ) {
-        m_player.show_holding(m_interface);
-      }
+    if(m_interface.word(0) == "intro") {
+      m_world.introduce( m_interface );
+    }
 
-      if(m_input.word(0) == "pickup" ) {
-        m_player.pickup( m_interface, m_input.word(1) );
-      }
+    if(m_interface.word(0) == "describe") {
+      m_player.describe( m_interface );
+    }
 
-      if(m_input.word(0) == "putdown" ) {
-        m_player.putdown( m_interface, m_input.word(1) );
-      }
+    if(m_interface.word(0) == "go") {
+      m_player.go( m_interface );
+      m_player.describe( m_interface );
+    }
 
-      if(m_input.word(0) == "use" ) {
-        m_player.use_item( m_interface, m_input.word(1) );
-      }
+    if(m_interface.word(0) == "quit") {
+      //...
+      exit(0);
+    }
+  }
 
+  void Engine::run() {
 
-      if(m_input.word(0) == "intro") {
-        m_world.introduce(m_interface);
-      }
+    announce();
 
-      //if(m_input.word(0) == "list") {
-      //  m_world.list_rooms();
-      //}
+    while(true) {
+      m_interface.wait_for_input();
 
-      if(m_input.word(0) == "describe") {
-        m_player.describe( m_interface );
-      }
-
-      if(m_input.word(0) == "go") {
-        m_player.go( m_interface, m_input.word(1) );
-        m_player.describe( m_interface );
-      }
-
-      if(m_input.word(0) == "quit") break; 
-
+      handle_input();
     }
 
   }

@@ -7,11 +7,11 @@
 #include <list>
 #include <boost/regex.hpp>
 
-#include "world.hh"
-#include "player.hh"
-
 namespace ta {
   
+  class Player;
+  class World;
+
   class Loader {
   private:
 
@@ -92,9 +92,11 @@ namespace ta {
     global_t   m_globals;
     room_map_t m_rooms;
     
+    /* Engine owns World and Player, we're just borrowing them
+       here, so its okay. i hope. */
 
-    World  &m_world;
-    Player &m_player;
+    World  *m_world;
+    Player *m_player;
     int     m_warnings;
 
 
@@ -122,7 +124,7 @@ namespace ta {
     void upload();
 
   public:
-    Loader( World&, Player& );
+    Loader( World*, Player* );
 
     void parse( const std::string& ); 
   };

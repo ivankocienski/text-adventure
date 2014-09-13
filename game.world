@@ -16,7 +16,14 @@
     mortality. Beware the darkest corners, for you never know what may pop up.
   %ENDDESCRIBE
 
-  %EXIT north hall
+  %EXIT north
+    %GOTO hall
+
+    %TYPE door
+    
+    %DESCRIBE
+    %ENDDESCRIBE
+  %ENDEXIT
 
   %ITEM key
 

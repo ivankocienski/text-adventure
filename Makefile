@@ -1,7 +1,8 @@
 
 CC=g++
 CFLAGS=-Wall -g # -std=c++11
-LFLAGS=-g -std=c++11 -lboost_regex
+LFLAGS=-g
+LIBS=-lboost_regex -lSDL -lSDL_image
 
 EXE=adventure
 SOURCES= \
@@ -19,14 +20,14 @@ OBJECTS= $(patsubst %.cc,%.o,$(SOURCES))
 HEADERS= $(patsubst %.cc,%.hh,$(SOURCES)) 
 
 all: $(OBJECTS)
-	$(CC) -o $(EXE) $(LFLAGS) $(OBJECTS)
+	$(CC) -o $(EXE) $(LFLAGS) $(OBJECTS) $(LIBS)
 
 .cc.o:
 	$(CC) -c $< $(CFLAGS)
 
 clean:
-	[ -e $(EXE) ] && rm $(EXE) || true
-	rm *.o
+	rm -f $(EXE)
+	rm -f *.o
 
 tags:
 	ctags *.cc *.hh

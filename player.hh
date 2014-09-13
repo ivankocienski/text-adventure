@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "interface.hh"
 
@@ -26,12 +27,12 @@ namespace ta {
     Room *current_room();
 
     void describe(Interface&);
-    void go(Interface&, const std::string& );
+    void go(Interface&);
     void show_holding( Interface& );
-    void use_item( Interface&, const std::string& );
+    void use_item( Interface&);
 
-    void pickup( Interface&, const std::string& );
-    void putdown( Interface&, const std::string& );
+    void pickup( Interface&);
+    void putdown( Interface&);
   };
 
 }; // namespace ta

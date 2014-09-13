@@ -1,37 +1,28 @@
 
 #pragma once 
 
-#include <map>
-#include <string>
-
-#include "interface.hh"
-#include "input_handler.hh"
-#include "room.hh"
 #include "player.hh"
 #include "world.hh"
+#include "interface.hh"
 
 namespace ta {
 
   class Engine {
     private:
 
-      Interface m_interface;
-      InputHandler m_input;
+      Interface &m_interface;
+      Player     m_player;
+      World      m_world;
 
-      Player m_player;
-      World m_world;
-
-      void show_help();
-
-      void input_loop( );
+      void show_help(); 
+      void announce(); 
+      void handle_input();
 
     public:
 
-      Engine();
+      Engine(Interface&);
+
       void run();
-
-
-      
   };
 
 }; // namespace ta;

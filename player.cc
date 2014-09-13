@@ -28,7 +28,9 @@ namespace ta {
     m_room->describe(i);
   }
 
-  void Player::go( Interface &i, const string &dir ) {
+  void Player::go( Interface &i ) {
+
+    string dir = i.word(1);
 
     if(dir.empty()) {
       i.puts( "Which direction should I go in, sir?" );
@@ -105,7 +107,9 @@ namespace ta {
     }
   }
 
-  void Player::pickup( Interface &i, const string &what ) {
+  void Player::pickup( Interface &i ) {
+
+    string what = i.word(1);
 
     if( !m_room->has_item( what ) ) {
       i.puts( "could not find '" + what + "' to pick up" );
@@ -117,7 +121,9 @@ namespace ta {
     m_holding.push_back( what );
   }
 
-  void Player::putdown( Interface &i, const string &what ) {
+  void Player::putdown( Interface &i ) {
+
+    string what = i.word(1);
 
     if( what == "" ) {
       i.puts( "Pick up what, sir?" );
@@ -139,7 +145,7 @@ namespace ta {
 
   }
 
-  void Player::use_item(Interface &i, const string &what ) {
+  void Player::use_item(Interface &i ) {
 
   }
 
