@@ -1,6 +1,10 @@
 
+#include <string>
+
 #include "interface.hh"
 #include "engine.hh"
+
+using namespace std;
 
 int main( int argc, char ** argv ) {
 
@@ -12,7 +16,9 @@ int main( int argc, char ** argv ) {
 
   while(true) {
     //interface.puts( 10, 10, "ABC abc 123 Hello, World" );
-    interface.wait_for_input();
+    string str = interface.wait_for_input();
+
+    interface.puts( str );
   }
 
   return 0;

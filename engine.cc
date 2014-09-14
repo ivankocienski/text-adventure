@@ -38,43 +38,44 @@ namespace ta {
 
   void Engine::handle_input() {
 
-    if(m_interface.word(0) == "help") {
-      show_help();
-    }
-
-    if(m_interface.word(0) == "holding" ) {
-      m_player.show_holding(m_interface);
-    }
-
-    if(m_interface.word(0) == "pickup" ) {
-      m_player.pickup( m_interface );
-    }
-
-    if(m_interface.word(0) == "putdown" ) {
-      m_player.putdown( m_interface );
-    }
-
-    if(m_interface.word(0) == "use" ) {
-      m_player.use_item( m_interface );
-    } 
-
-    if(m_interface.word(0) == "intro") {
-      m_world.introduce( m_interface );
-    }
-
-    if(m_interface.word(0) == "describe") {
-      m_player.describe( m_interface );
-    }
-
-    if(m_interface.word(0) == "go") {
-      m_player.go( m_interface );
-      m_player.describe( m_interface );
-    }
-
-    if(m_interface.word(0) == "quit") {
-      //...
-      exit(0);
-    }
+/*     if(m_interface.word(0) == "help") {
+ *       show_help();
+ *     }
+ * 
+ *     if(m_interface.word(0) == "holding" ) {
+ *       m_player.show_holding(m_interface);
+ *     }
+ * 
+ *     if(m_interface.word(0) == "pickup" ) {
+ *       m_player.pickup( m_interface );
+ *     }
+ * 
+ *     if(m_interface.word(0) == "putdown" ) {
+ *       m_player.putdown( m_interface );
+ *     }
+ * 
+ *     if(m_interface.word(0) == "use" ) {
+ *       m_player.use_item( m_interface );
+ *     } 
+ * 
+ *     if(m_interface.word(0) == "intro") {
+ *       m_world.introduce( m_interface );
+ *     }
+ * 
+ *     if(m_interface.word(0) == "describe") {
+ *       m_player.describe( m_interface );
+ *     }
+ * 
+ *     if(m_interface.word(0) == "go") {
+ *       m_player.go( m_interface );
+ *       m_player.describe( m_interface );
+ *     }
+ * 
+ *     if(m_interface.word(0) == "quit") {
+ *       //...
+ *       exit(0);
+ *     }
+ */
   }
 
   void Engine::run() {

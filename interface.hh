@@ -16,13 +16,13 @@ namespace ta {
       bool m_get_events;
 
       void handle_char(int);
-      void break_buffer_into_words();
       void draw_buffer();
+      void draw_history();
 
       std::list<char> m_buffer;
       std::list<char>::iterator m_buffer_pos;
 
-      std::vector<std::string> m_words;
+      std::list<std::string> m_history;
 
     public:
 
@@ -34,8 +34,7 @@ namespace ta {
       void puts( const std::string& );
       void puts( int, int, const std::string& );
 
-      void wait_for_input();
-      std::string word(int);
+      std::string wait_for_input();
   };
 
 }; // namespace ta;

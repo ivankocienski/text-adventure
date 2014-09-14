@@ -30,7 +30,7 @@ namespace ta {
 
   void Player::go( Interface &i ) {
 
-    string dir = i.word(1);
+    string dir = ""; //i.word(1);
 
     if(dir.empty()) {
       i.puts( "Which direction should I go in, sir?" );
@@ -109,7 +109,7 @@ namespace ta {
 
   void Player::pickup( Interface &i ) {
 
-    string what = i.word(1);
+    string what = ""; //i.word(1);
 
     if( !m_room->has_item( what ) ) {
       i.puts( "could not find '" + what + "' to pick up" );
@@ -123,7 +123,7 @@ namespace ta {
 
   void Player::putdown( Interface &i ) {
 
-    string what = i.word(1);
+    string what = ""; //i.word(1);
 
     if( what == "" ) {
       i.puts( "Pick up what, sir?" );
