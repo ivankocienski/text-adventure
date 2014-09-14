@@ -1,8 +1,10 @@
 
 #include <cstdlib>
 #include <string>
-#include <map>
 #include <iostream>
+#include <vector>
+#include <boost/regex.hpp>
+#include <boost/algorithm/string/regex.hpp>
 
 #include "loader.hh"
 #include "engine.hh"
@@ -22,13 +24,14 @@ namespace ta {
 
   void Engine::announce() {
 
+    m_interface.puts( "ADVENTURE (v0)" );
+
     m_world.introduce(m_interface);
   }
 
   void Engine::show_help() {
 
     cout 
-      << "ADVENTURE (v0)" << endl
       << "commands help:" << endl
       << "  quit - exit" << endl
       //<< "  list - list current rooms in world" << endl
@@ -36,56 +39,68 @@ namespace ta {
       << endl;
   } 
 
-  void Engine::handle_input() {
+  void Engine::handle_input( const vector<string> &words ) {
 
-/*     if(m_interface.word(0) == "help") {
- *       show_help();
- *     }
- * 
- *     if(m_interface.word(0) == "holding" ) {
- *       m_player.show_holding(m_interface);
- *     }
- * 
- *     if(m_interface.word(0) == "pickup" ) {
- *       m_player.pickup( m_interface );
- *     }
- * 
- *     if(m_interface.word(0) == "putdown" ) {
- *       m_player.putdown( m_interface );
- *     }
- * 
- *     if(m_interface.word(0) == "use" ) {
- *       m_player.use_item( m_interface );
- *     } 
- * 
- *     if(m_interface.word(0) == "intro") {
- *       m_world.introduce( m_interface );
- *     }
- * 
- *     if(m_interface.word(0) == "describe") {
- *       m_player.describe( m_interface );
- *     }
- * 
- *     if(m_interface.word(0) == "go") {
- *       m_player.go( m_interface );
- *       m_player.describe( m_interface );
- *     }
- * 
- *     if(m_interface.word(0) == "quit") {
- *       //...
- *       exit(0);
- *     }
- */
+    if(words[0] == "help") {
+      show_help();
+    }
+
+    if(words[0] == "holding" ) {
+      m_player.show_holding(m_interface);
+    }
+
+    if(words[0] == "pickup" ) {
+      m_player.pickup( words, m_interface );
+    }
+
+    if(words[0] == "putdown" ) {
+      m_player.putdown( words, m_interface );
+    }
+
+    if(words[0] == "use" ) {
+      m_player.use_item( words, m_interface );
+    } 
+
+    if(words[0] == "intro") {
+      m_world.introduce( m_interface );
+    }
+
+    if(words[0] == "describe") {
+      m_player.describe( m_interface );
+    }
+
+    if(words[0] == "go") {
+      m_player.go( words, m_interface );
+      m_player.describe( m_interface );
+    }
+
+    if(words[0] == "quit") {
+      //...
+      exit(0);
+    }
+
   }
 
   void Engine::run() {
 
+    boost::regex space_r( "\\r+" );
+    vector<string> words;
+
     announce();
 
     while(true) {
-      m_interface.wait_for_input();
 
-      handle_input();
+      string input = m_interface.wait_for_input();
+
+      split_regex( words, input, space_r );
+
+      if( words.size() == 0 ) continue;
+
+      if( words[0] == "" ) words.erase( words.begin() ); // HACK
+
+      if( words.size() == 0 ) continue;
+
+      handle_input( words );
     }
 
   }

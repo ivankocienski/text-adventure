@@ -27,12 +27,12 @@ namespace ta {
     Room *current_room();
 
     void describe(Interface&);
-    void go(Interface&);
+    void go( const std::vector<std::string>&, Interface&);
     void show_holding( Interface& );
-    void use_item( Interface&);
+    void use_item( const std::vector<std::string>&, Interface&);
 
-    void pickup( Interface&);
-    void putdown( Interface&);
+    void pickup( const std::vector<std::string>&, Interface&);
+    void putdown( const std::vector<std::string>&, Interface&);
   };
 
 }; // namespace ta

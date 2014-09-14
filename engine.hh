@@ -1,6 +1,9 @@
 
 #pragma once 
 
+#include <string>
+#include <vector>
+
 #include "player.hh"
 #include "world.hh"
 #include "interface.hh"
@@ -16,7 +19,7 @@ namespace ta {
 
       void show_help(); 
       void announce(); 
-      void handle_input();
+      void handle_input( const std::vector<std::string>& );
 
     public:
 

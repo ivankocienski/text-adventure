@@ -28,9 +28,9 @@ namespace ta {
     m_room->describe(i);
   }
 
-  void Player::go( Interface &i ) {
+  void Player::go( const std::vector<std::string>& words, Interface &i ) {
 
-    string dir = ""; //i.word(1);
+    string dir = words[1];
 
     if(dir.empty()) {
       i.puts( "Which direction should I go in, sir?" );
@@ -107,9 +107,9 @@ namespace ta {
     }
   }
 
-  void Player::pickup( Interface &i ) {
+  void Player::pickup( const std::vector<std::string>& words, Interface &i ) {
 
-    string what = ""; //i.word(1);
+    string what = words[1];
 
     if( !m_room->has_item( what ) ) {
       i.puts( "could not find '" + what + "' to pick up" );
@@ -121,9 +121,9 @@ namespace ta {
     m_holding.push_back( what );
   }
 
-  void Player::putdown( Interface &i ) {
+  void Player::putdown( const std::vector<std::string>& words, Interface &i ) {
 
-    string what = ""; //i.word(1);
+    string what = words[1];
 
     if( what == "" ) {
       i.puts( "Pick up what, sir?" );
@@ -145,7 +145,7 @@ namespace ta {
 
   }
 
-  void Player::use_item(Interface &i ) {
+  void Player::use_item( const std::vector<std::string>& words, Interface &i ) {
 
   }
 

@@ -155,6 +155,8 @@ namespace ta {
 
   void Interface::puts( const string &s ) { 
     m_history.push_front(s);
+    if(m_history.size() > 10) 
+      m_history.pop_back();
   }
 
   void Interface::handle_char( int c ) {
