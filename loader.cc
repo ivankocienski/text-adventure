@@ -162,6 +162,14 @@ namespace ta {
 
           switch( parser.token_code() ) {
 
+            case TC_VERSION:
+              if( parser.first_match() != "1" ) {
+                cerr << "worldfile not version 1" << endl;
+                exit(-1);
+              }
+              
+              break;
+
             case TC_NAME:
               set_decleration( m_globals.name, parser );
               break;
@@ -268,6 +276,7 @@ namespace ta {
     parser.define_matcher( TC_ENDDESCRIBE, "^%ENDDESCRIBE\\b" );
     parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
     parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
+    parser.define_matcher( TC_VERSION,     "^%VERSION\\s+(\\w+)" );
 
     parse_toplevel( parser );
 

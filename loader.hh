@@ -110,7 +110,8 @@ namespace ta {
       TC_DESCRIBE,
       TC_ENDDESCRIBE,
       TC_EXIT,
-      TC_ITEM
+      TC_ITEM,
+      TC_VERSION
     };
 
     void moan( const Parser&, const std::string& );
