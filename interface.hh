@@ -14,6 +14,7 @@ namespace ta {
       SDL_Surface* m_screen;
       SDL_Surface* m_font;
       bool m_get_events;
+      bool m_repaint;
 
       void handle_char(int);
       void draw_buffer();
@@ -23,6 +24,8 @@ namespace ta {
       std::list<char>::iterator m_buffer_pos;
 
       std::list<std::string> m_history;
+
+      void draw_box( int, int, int, int );
 
     public:
 

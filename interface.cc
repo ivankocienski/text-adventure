@@ -1,6 +1,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -56,6 +57,7 @@ namespace ta {
     m_buffer_pos = m_buffer.begin();
 
     m_get_events = true;
+    m_repaint = true;
 
     while(m_get_events) {
 
@@ -64,7 +66,7 @@ namespace ta {
 
           case SDL_KEYDOWN:
 
-            handle_char( event.key.keysym.sym & 0x7F );
+            handle_char( event.key.keysym.sym );
 
             break;
 
@@ -76,12 +78,19 @@ namespace ta {
         }
       }
 
-      SDL_FillRect( m_screen, NULL, 0 );
+      if(m_repaint) {
+        SDL_FillRect( m_screen, NULL, 0 );
 
-      draw_buffer();
-      draw_history();
+        puts( 31, 0, "A D V E N T U R E" );
 
-      SDL_Flip(m_screen);
+        draw_buffer();
+        draw_history();
+        
+        SDL_Flip(m_screen);
+
+        m_repaint = false;
+      }
+
       SDL_Delay(50);
     }
 
@@ -99,8 +108,8 @@ namespace ta {
 
   void Interface::puts( int x, int y, const string &str ) {
 
-    SDL_Rect s = { 0, 0, 7, 7 };
-    SDL_Rect d = { (Sint16)x, (Sint16)y, 0, 0 };
+    SDL_Rect s = { 0, 0, 8, 8 };
+    SDL_Rect d = { (Sint16)x * 8, (Sint16)y * 8, 0, 0 };
 
     const char *c = str.c_str();
 
@@ -119,15 +128,15 @@ namespace ta {
   }
 
   void Interface::draw_history() {
-    int pos = 460;
+    int pos = 54;
 
     list<string>::iterator it = m_history.begin();
 
+    draw_box( 0, 2, 79, 52 );
+
     while( it != m_history.end() ) {
-
-      puts( 0, pos, *it );
-
-      pos -= 10;
+      puts( 1, pos, *it );
+      pos--;
       it++;
     }
   }
@@ -136,8 +145,10 @@ namespace ta {
 
     list<char>::iterator c = m_buffer.begin();
 
-    SDL_Rect s = { 0,   0, 7, 7 };
-    SDL_Rect d = { 0, 470, 0, 0 };
+    SDL_Rect s = { 0,   0, 8, 8 };
+    SDL_Rect d = { 8, 463, 0, 0 };
+
+    draw_box( 0, 57, 79, 2 );
 
     while(c != m_buffer.end() ) {
 
@@ -150,6 +161,60 @@ namespace ta {
 
       c++; 
     }
+  }
+
+  void Interface::draw_box( int x, int y, int w, int h ) {
+
+    SDL_Rect top_l = {  0, 48, 8, 8 };
+    SDL_Rect top   = {  8, 48, 8, 8 };
+    SDL_Rect top_r = { 16, 48, 8, 8 };
+    SDL_Rect left  = { 24, 48, 8, 8 };
+    SDL_Rect right = { 24, 56, 8, 8 };
+    SDL_Rect bot_l = {  0, 56, 8, 8 };
+    SDL_Rect bot   = {  8, 56, 8, 8 };
+    SDL_Rect bot_r = { 16, 56, 8, 8 };
+
+    SDL_Rect dst;
+    
+    int i; 
+
+    dst.y = y * 8;
+    dst.x = x * 8;
+    SDL_BlitSurface( m_font, &top_l, m_screen, &dst );
+
+    dst.x = (x + w) * 8; 
+    SDL_BlitSurface( m_font, &top_r, m_screen, &dst );
+
+    dst.x = x * 8;
+    dst.y = (y + h) * 8;
+      SDL_BlitSurface( m_font, &bot_l, m_screen, &dst );
+    
+    dst.x = (x + w) * 8;
+    SDL_BlitSurface( m_font, &bot_r, m_screen, &dst );
+
+    dst.x = x * 8 + 8;
+    for(i = 0; i < w - 1; i++ ) {
+      dst.y = y * 8;
+      SDL_BlitSurface( m_font, &top, m_screen, &dst );
+      
+      dst.y = (y + h) * 8;
+      SDL_BlitSurface( m_font, &bot, m_screen, &dst );
+      
+      dst.x += 8;
+    }
+
+    dst.y = y * 8 + 8;
+    for( i = 0; i < h - 1; i++ ) {
+
+      dst.x = x * 8;
+      SDL_BlitSurface( m_font, &left, m_screen, &dst );
+
+      dst.x = (x + w) * 8;
+      SDL_BlitSurface( m_font, &right, m_screen, &dst ); 
+
+      dst.y += 8; 
+    }
+
 
   }
 
@@ -175,11 +240,17 @@ namespace ta {
         if( m_buffer.size() > 0 ) {
           m_buffer_pos--;
           m_buffer_pos = m_buffer.erase(m_buffer_pos);
+          m_repaint = true;
         }
         break;
 
       default:
-        m_buffer.insert( m_buffer_pos, (char)c );
+        if(m_buffer.size() < 75 ) {
+          if(isascii(c)) {
+            m_buffer.insert( m_buffer_pos, (char)c );
+            m_repaint = true;
+          }
+        }
         break;
     } 
   }
