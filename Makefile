@@ -14,7 +14,10 @@ SOURCES= \
 	player.cc \
 	world.cc \
 	loader.cc \
-	item.cc
+	item.cc \
+	sdl/screen.cc \
+	sdl/event.cc \
+	sdl/surface.cc
 
 OBJECTS= $(patsubst %.cc,%.o,$(SOURCES)) 
 HEADERS= $(patsubst %.cc,%.hh,$(SOURCES)) 
@@ -23,7 +26,7 @@ all: $(OBJECTS)
 	$(CC) -o $(EXE) $(LFLAGS) $(OBJECTS) $(LIBS)
 
 .cc.o:
-	$(CC) -c $< $(CFLAGS)
+	$(CC) -c $< $(CFLAGS) -o $@
 
 clean:
 	rm -f $(EXE)

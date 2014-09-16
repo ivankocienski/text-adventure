@@ -1,57 +1,51 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
 
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 
+#include "sdl/event.hh"
+#include "sdl/screen.hh"
+#include "sdl/surface.hh"
 #include "interface.hh"
 
 using namespace std;
 
 namespace ta {
   
-  Interface::Interface() { 
-    m_screen = NULL;
-    m_font   = NULL;
+  Interface::Interface() : m_screen( new SDL::Screen ), m_debug_font( m_screen ) { 
   }
 
   Interface::~Interface() {
-
-    if(m_font) 
-      SDL_FreeSurface(m_font);
-
-    if(m_screen) 
-      SDL_Quit();
+    m_history.clear();
+    m_fonts.clear();
   }
 
   void Interface::init(int w, int h) { 
 
-    m_screen = SDL_SetVideoMode(w, h, 8, SDL_SWSURFACE); 
-    if( !m_screen ) {
+    if( !m_screen->open( w, h ) ) {
       cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
       exit(-1);
     }
 
-    m_font = IMG_Load( "font.png" );
-    if( !m_font ) {
-      cerr << "Failed to load font: " << SDL_GetError() << endl;
+    if( !m_debug_font.load( "font.png" ) ) {
+      cerr << "Failed to load font" << endl;
       exit(-1);
     }
 
-    SDL_SetPalette( 
-        m_screen, 
-        SDL_LOGPAL,
-        m_font->format->palette->colors,
-        0,
-        m_font->format->palette->ncolors 
-    ); 
+    m_debug_font.load_palette();
+
+    m_fonts.resize(8);
+
+    for(int i = 0; i < 8; i++) {
+      m_fonts[i] = m_debug_font;
+      m_fonts[i].remap_color_to( i ); 
+    }
   }
 
   string Interface::wait_for_input() {
 
-    SDL_Event event;
+    SDL::Event event;
 
     m_buffer.clear();
     m_buffer_pos = m_buffer.begin();
@@ -61,32 +55,30 @@ namespace ta {
 
     while(m_get_events) {
 
-      while(SDL_PollEvent(&event)) {
-        switch (event.type) {
+      while(event.poll()) {
+        switch (event.type()) {
 
-          case SDL_KEYDOWN:
-
-            handle_char( event.key.keysym.sym );
-
+          case SDL_KEYDOWN: 
+            handle_char( event.key_sym() ); 
             break;
 
-        case SDL_QUIT:
+          case SDL_QUIT:
             exit(0);
-            break;
-
-
+            break; 
         }
       }
 
       if(m_repaint) {
-        SDL_FillRect( m_screen, NULL, 0 );
+        m_screen->clear();
 
-        puts( 31, 0, "A D V E N T U R E" );
+        m_fonts[1].puts( 31, 0, "A D V E N T U R E" );
 
         draw_buffer();
         draw_history();
         
-        SDL_Flip(m_screen);
+        m_debug_font.puts( 10, 10, "YOLO" );
+
+        m_screen->flip();
 
         m_repaint = false;
       }
@@ -95,7 +87,6 @@ namespace ta {
     }
 
     string ret;
-
     ret.resize( m_buffer.size() );
 
     int pos = 0;
@@ -103,39 +94,35 @@ namespace ta {
     for( std::list<char>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) 
       ret[pos++] = *it;
 
+    puts( C_LIGHT_GREY, ret );
+
     return ret;
   }
 
-  void Interface::puts( int x, int y, const string &str ) {
+  void Interface::puts( int c, const string &str ) {
 
-    SDL_Rect s = { 0, 0, 8, 8 };
-    SDL_Rect d = { (Sint16)x * 8, (Sint16)y * 8, 0, 0 };
+    struct history_s hs = { str, m_fonts[c] };
 
-    const char *c = str.c_str();
+    m_history.push_front(hs); 
 
-    while(*c) {
+    if(m_history.size() > 10) 
+      m_history.pop_back();
+  }
 
-      s.x = ((*c - 32) & 0x0f) << 3;
-      s.y = ((*c - 32) & 0xf0) >> 1;
-
-      SDL_BlitSurface( m_font, &s, m_screen, &d );
-
-      d.x += 8;
-
-      c++; 
-    }
-
+  void Interface::puts( const string &s ) {
+    puts( 7, s );
   }
 
   void Interface::draw_history() {
     int pos = 54;
 
-    list<string>::iterator it = m_history.begin();
+    list<struct history_s>::iterator it = m_history.begin();
 
-    draw_box( 0, 2, 79, 52 );
+    m_fonts[7].draw_box( 0, 2, 79, 52 );
 
     while( it != m_history.end() ) {
-      puts( 1, pos, *it );
+
+      (*it).font.puts( 1, pos, (*it).string );
       pos--;
       it++;
     }
@@ -144,84 +131,17 @@ namespace ta {
   void Interface::draw_buffer() {
 
     list<char>::iterator c = m_buffer.begin();
+    int x = 1; 
 
-    SDL_Rect s = { 0,   0, 8, 8 };
-    SDL_Rect d = { 8, 463, 0, 0 };
-
-    draw_box( 0, 57, 79, 2 );
+    m_fonts[7].draw_box( 0, 57, 79, 2 );
 
     while(c != m_buffer.end() ) {
 
-      s.x = ((*c - 32) & 0x0f) << 3;
-      s.y = ((*c - 32) & 0xf0) >> 1;
+      m_fonts[7].put_char( x, 58, *c );
 
-      SDL_BlitSurface( m_font, &s, m_screen, &d );
-
-      d.x += 8;
-
+      x++;
       c++; 
     }
-  }
-
-  void Interface::draw_box( int x, int y, int w, int h ) {
-
-    SDL_Rect top_l = {  0, 48, 8, 8 };
-    SDL_Rect top   = {  8, 48, 8, 8 };
-    SDL_Rect top_r = { 16, 48, 8, 8 };
-    SDL_Rect left  = { 24, 48, 8, 8 };
-    SDL_Rect right = { 24, 56, 8, 8 };
-    SDL_Rect bot_l = {  0, 56, 8, 8 };
-    SDL_Rect bot   = {  8, 56, 8, 8 };
-    SDL_Rect bot_r = { 16, 56, 8, 8 };
-
-    SDL_Rect dst;
-    
-    int i; 
-
-    dst.y = y * 8;
-    dst.x = x * 8;
-    SDL_BlitSurface( m_font, &top_l, m_screen, &dst );
-
-    dst.x = (x + w) * 8; 
-    SDL_BlitSurface( m_font, &top_r, m_screen, &dst );
-
-    dst.x = x * 8;
-    dst.y = (y + h) * 8;
-      SDL_BlitSurface( m_font, &bot_l, m_screen, &dst );
-    
-    dst.x = (x + w) * 8;
-    SDL_BlitSurface( m_font, &bot_r, m_screen, &dst );
-
-    dst.x = x * 8 + 8;
-    for(i = 0; i < w - 1; i++ ) {
-      dst.y = y * 8;
-      SDL_BlitSurface( m_font, &top, m_screen, &dst );
-      
-      dst.y = (y + h) * 8;
-      SDL_BlitSurface( m_font, &bot, m_screen, &dst );
-      
-      dst.x += 8;
-    }
-
-    dst.y = y * 8 + 8;
-    for( i = 0; i < h - 1; i++ ) {
-
-      dst.x = x * 8;
-      SDL_BlitSurface( m_font, &left, m_screen, &dst );
-
-      dst.x = (x + w) * 8;
-      SDL_BlitSurface( m_font, &right, m_screen, &dst ); 
-
-      dst.y += 8; 
-    }
-
-
-  }
-
-  void Interface::puts( const string &s ) { 
-    m_history.push_front(s);
-    if(m_history.size() > 10) 
-      m_history.pop_back();
   }
 
   void Interface::handle_char( int c ) {
@@ -254,6 +174,128 @@ namespace ta {
         break;
     } 
   }
+
+  /* font stuff */
+
+  Interface::Font::Font() { } 
+
+  Interface::Font::Font( boost::shared_ptr<SDL::Screen> &scr_p ) : m_screen( scr_p ) { 
+  }
+
+  Interface::Font::Font( boost::shared_ptr<SDL::Screen> &scr_p, SDL::Surface &sfc ) : m_screen( scr_p ), m_surface( sfc ) {
+  }
+
+  bool Interface::Font::load( const string &from ) {
+    return m_surface.load( from );
+  }
+
+  void Interface::Font::puts( int x, int y, const string &str ) {
+
+    SDL_Rect s = { 0, 0, 8, 8 };
+    SDL_Rect d = { (Sint16)(x * 8), (Sint16)(y * 8), 0, 0 };
+
+    const char *c = str.c_str();
+
+    while(*c) {
+
+      s.x = ((*c - 32) & 0x0f) << 3;
+      s.y = ((*c - 32) & 0xf0) >> 1;
+
+      m_screen->blit( d, m_surface, s );
+
+      d.x += 8;
+
+      c++; 
+    }
+  }
+
+  void Interface::Font::put_char( int x, int y, int c ) {
+
+    SDL_Rect s = { 0, 0, 8, 8 };
+    SDL_Rect d = { 0, 0, 0, 0 };
+
+    d.x = x << 3;
+    d.y = y << 3;
+
+    s.x = ((c - 32) & 0x0f) << 3;
+    s.y = ((c - 32) & 0xf0) >> 1;
+
+    m_screen->blit( d, m_surface, s );
+  }
+
+  void Interface::Font::remap_color_to( int color ) {
+
+    m_surface.lock();
+
+    unsigned char *p = m_surface.pixel_bytes();
+    int c = m_surface.height() * m_surface.width(); 
+
+    while(c) {
+      *p = *p ? color : 0;
+
+      c--;
+      p++;
+    }
+
+    m_surface.unlock();
+  }
+
+  void Interface::Font::load_palette() {
+    m_screen->load_palette( m_surface );
+  }
+
+  void Interface::Font::draw_box( int x, int y, int w, int h ) {
+
+    SDL_Rect top_l = {  0, 48, 8, 8 };
+    SDL_Rect top   = {  8, 48, 8, 8 };
+    SDL_Rect top_r = { 16, 48, 8, 8 };
+    SDL_Rect left  = { 24, 48, 8, 8 };
+    SDL_Rect right = { 24, 56, 8, 8 };
+    SDL_Rect bot_l = {  0, 56, 8, 8 };
+    SDL_Rect bot   = {  8, 56, 8, 8 };
+    SDL_Rect bot_r = { 16, 56, 8, 8 };
+
+    SDL_Rect dst; 
+    int i; 
+
+    dst.y = y * 8;
+    dst.x = x * 8;
+    m_screen->blit( dst, m_surface, top_l );
+
+    dst.x = (x + w) * 8; 
+    m_screen->blit( dst, m_surface, top_r );
+
+    dst.x = x * 8;
+    dst.y = (y + h) * 8;
+    m_screen->blit( dst, m_surface, bot_l );
+    
+    dst.x = (x + w) * 8;
+    m_screen->blit( dst, m_surface, bot_r );
+
+    dst.x = x * 8 + 8;
+    for(i = 0; i < w - 1; i++ ) {
+      dst.y = y * 8;
+      m_screen->blit( dst, m_surface, top );
+      
+      dst.y = (y + h) * 8;
+      m_screen->blit( dst, m_surface, bot );
+      
+      dst.x += 8;
+    }
+
+    dst.y = y * 8 + 8;
+    for( i = 0; i < h - 1; i++ ) {
+
+      dst.x = x * 8;
+      m_screen->blit( dst, m_surface, left );
+
+      dst.x = (x + w) * 8;
+      m_screen->blit( dst, m_surface, right );
+
+      dst.y += 8; 
+    } 
+  }
+
 
 }; // namespace std
 
