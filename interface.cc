@@ -76,8 +76,6 @@ namespace ta {
         draw_buffer();
         draw_history();
         
-        m_debug_font.puts( 10, 10, "YOLO" );
-
         m_screen->flip();
 
         m_repaint = false;

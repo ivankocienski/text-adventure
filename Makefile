@@ -10,7 +10,6 @@ SOURCES= \
 	engine.cc \
 	room.cc \
 	interface.cc \
-	input_handler.cc \
 	player.cc \
 	world.cc \
 	loader.cc \
