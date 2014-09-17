@@ -14,6 +14,7 @@ SOURCES= \
 	world.cc \
 	loader.cc \
 	item.cc \
+	description.cc \
 	sdl/screen.cc \
 	sdl/event.cc \
 	sdl/surface.cc

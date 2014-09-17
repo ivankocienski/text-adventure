@@ -20,6 +20,8 @@ namespace ta {
     std::string m_author;
     std::string m_copyright;
 
+    Description m_description;
+
   public:
     World();
 
@@ -32,6 +34,8 @@ namespace ta {
     void set_copyright( const std::string &);
 
     void introduce(Interface&);
+
+    Description& description();
   };
 
 }; // namespace ta

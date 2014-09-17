@@ -9,6 +9,7 @@
 #include "loader.hh"
 #include "world.hh"
 #include "player.hh"
+#include "description.hh"
 
 using namespace std;
 
@@ -46,7 +47,7 @@ namespace ta {
     t.assigned = true;
   }
 
-  void Loader::parse_room_describe( decleration_t &desc, Parser &parser ) {
+  void Loader::parse_describe( decleration_t &desc, Parser &parser ) {
 
     set_decleration( desc, parser );
 
@@ -58,14 +59,23 @@ namespace ta {
           return;
 
         case Parser::TT_STRING:
-          desc.parts.push_back( parser.line() );
+          if( parser.line() == "." )
+            desc.parts.push_back( "" );
+          else
+            desc.parts.push_back( parser.line() );
           break;
+
+        
 
         case Parser::TT_TOKEN:
           switch( parser.token_code() ) {
 
             case TC_ENDDESCRIBE:
               return;
+
+            case TC_PAUSE: 
+              desc.parts.push_back( " " );
+              break;
 
             default:
               moan( parser, "bad token at DESCRIBE" );
@@ -129,7 +139,7 @@ namespace ta {
               break;
 
             case TC_DESCRIBE:
-              parse_room_describe( room.description, parser );
+              parse_describe( room.description, parser );
               break;
 
             default:
@@ -142,6 +152,46 @@ namespace ta {
 
       }
     }
+  }
+
+  void Loader::parse_intro( Parser &parser ) {
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in INTRO" );
+          return;
+
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string in INTRO" );
+          break;
+
+        case Parser::TT_TOKEN: {
+
+          switch( parser.token_code() ) {
+
+            case TC_ENDINTRO:
+              return;
+
+            case TC_DESCRIBE:
+              parse_describe( m_globals.introduction, parser );
+              break;
+
+            case TC_START:
+              set_decleration( m_globals.start, parser );
+              break;
+
+            default:
+              moan( parser, "bad token at INTRO" );
+              break;
+          }
+        }
+        break;
+
+      }
+    }
+
 
 
   }
@@ -182,8 +232,8 @@ namespace ta {
               set_decleration( m_globals.copyright, parser );
               break;
 
-            case TC_START:
-              set_decleration( m_globals.start, parser );
+            case TC_INTRO:
+              parse_intro( parser );
               break;
 
             case TC_ROOM:
@@ -200,12 +250,27 @@ namespace ta {
     } 
   }
 
+  void Loader::upload_description( Description& d, decleration_t &dec ) {
+
+    for( vector<string>::iterator it = dec.parts.begin(); it != dec.parts.end(); it++) {
+
+      if( *it == " " ) {
+        d.push_pause();
+        continue;
+      }
+
+      d.push_string( *it );
+    } 
+  }
 
   void Loader::upload() {
 
     m_world->set_name(      m_globals.name.parts.front() );
     m_world->set_author(    m_globals.author.parts.front() );
     m_world->set_copyright( m_globals.copyright.parts.front() );
+
+    if(m_globals.introduction.assigned) 
+      upload_description( m_world->description(), m_globals.introduction );
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
@@ -277,6 +342,9 @@ namespace ta {
     parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
     parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
     parser.define_matcher( TC_VERSION,     "^%VERSION\\s+(\\w+)" );
+    parser.define_matcher( TC_INTRO,       "^%INTRO\\b" );
+    parser.define_matcher( TC_ENDINTRO,    "^%ENDINTRO\\b" );
+    parser.define_matcher( TC_PAUSE,       "^%PAUSE\\b" );
 
     parse_toplevel( parser );
 

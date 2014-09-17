@@ -9,7 +9,24 @@
 
 # a comment
 
-%START dungeon
+
+%INTRO
+  %DESCRIBE
+    In a world, far far away... They came
+    %PAUSE
+
+    Steve was a simple farmer boy until...
+    %PAUSE
+    "Whats that?" Sais Steve's father looking into the sky.
+    "Its..."
+    .
+    "Its..."
+    %PAUSE
+
+  %ENDDESCRIBE
+
+  %START dungeon
+%ENDINTRO
 
 %ROOM dungeon
 

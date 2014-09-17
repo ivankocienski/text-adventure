@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "interface.hh"
+#include "description.hh"
 
 namespace ta {
 
@@ -12,6 +13,8 @@ namespace ta {
   class Room {
 
     private:
+
+      //Description m_description;
 
       std::string m_name;
       std::vector<std::string> m_description;

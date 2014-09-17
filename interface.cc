@@ -45,6 +45,54 @@ namespace ta {
     }
   }
 
+  void Interface::press_any_key() {
+
+    SDL::Event event;
+
+    m_get_events = true;
+    m_repaint = true;
+
+    while(m_get_events) {
+
+      if(m_cursor_count) {
+        m_cursor_count--;
+
+      } else {
+        m_cursor_count = 20;
+        m_cursor_show  = !m_cursor_show;
+        m_repaint = true; 
+      }
+
+      while(event.poll()) {
+        switch (event.type()) {
+
+          case SDL_KEYUP: 
+            if( event.key_sym() == SDLK_SPACE ) m_get_events = false;
+            break;
+
+          case SDL_QUIT:
+            exit(0);
+            break; 
+        }
+      }
+
+      if(m_repaint) {
+        m_screen->clear();
+
+        m_fonts[1].puts( 31, 0, "A D V E N T U R E" );
+
+        draw_prompt();
+        draw_history();
+        
+        m_screen->flip();
+
+        m_repaint = false;
+      }
+
+      SDL_Delay(50);
+    }
+  }
+
   string Interface::wait_for_input() {
 
     SDL::Event event;
@@ -118,6 +166,16 @@ namespace ta {
 
   void Interface::puts( const string &s ) {
     puts( 7, s );
+  }
+
+  void Interface::draw_prompt() {
+
+    m_fonts[7].draw_box( 0, 57, 79, 2 );
+
+    m_fonts[2].puts( 1, 58, "Press SPACEBAR to continue" );
+
+    if(m_cursor_show)
+      m_screen->fill_rect( 27 * 8, 58 * 8, 8, 8, 2);
   }
 
   void Interface::draw_history() {

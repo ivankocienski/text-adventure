@@ -58,6 +58,7 @@ namespace ta {
       void handle_char(int);
       void draw_buffer();
       void draw_history();
+      void draw_prompt();
 
       std::list<char> m_buffer;
       std::list<char>::iterator m_buffer_pos;
@@ -88,6 +89,8 @@ namespace ta {
       void puts( const std::string& );
 
       std::string wait_for_input();
+
+      void press_any_key();
   };
 
 }; // namespace ta;

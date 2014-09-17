@@ -51,6 +51,9 @@ namespace ta {
     i.puts( m_name );
     i.puts( "by " + m_author );
     i.puts( "(c) " + m_copyright );
+    i.puts( "" );
+
+    m_description.show( i );
 
   }
 
@@ -64,6 +67,10 @@ namespace ta {
 
   void World::set_copyright( const string &s ) {
     m_copyright = s;
+  }
+
+  Description& World::description() {
+    return m_description;
   }
 
 }; // namespace ta

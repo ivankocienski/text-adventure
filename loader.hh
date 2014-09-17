@@ -7,6 +7,8 @@
 #include <list>
 #include <boost/regex.hpp>
 
+#include "description.hh"
+
 namespace ta {
   
   class Player;
@@ -73,6 +75,7 @@ namespace ta {
       decleration_t author;
       decleration_t copyright;
       decleration_t start;
+      decleration_t introduction;
     } global_t, *p_global_t;
 
     typedef struct room_s {
@@ -111,7 +114,10 @@ namespace ta {
       TC_ENDDESCRIBE,
       TC_EXIT,
       TC_ITEM,
-      TC_VERSION
+      TC_VERSION,
+      TC_INTRO,
+      TC_ENDINTRO,
+      TC_PAUSE
     };
 
     void moan( const Parser&, const std::string& );
@@ -119,9 +125,13 @@ namespace ta {
 
     void set_decleration( decleration_t&, const Parser& );
 
-    void parse_room_describe( decleration_t&, Parser& );
+    void parse_describe( decleration_t&, Parser& );
+
     void parse_room( Parser& );
+    void parse_intro( Parser& );
     void parse_toplevel( Parser& );
+
+    void upload_description( Description&, decleration_t& );
     void upload();
 
   public:
