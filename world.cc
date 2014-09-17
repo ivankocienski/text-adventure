@@ -38,10 +38,9 @@ namespace ta {
 
     room_map_t::iterator it = m_rooms.find(n);
 
-    if(it == m_rooms.end()) {
-      cerr << "could not find room: " << n << endl;
-      exit(-1);
-    }
+    if(it == m_rooms.end())
+      return NULL;
+    
 
     return &(*it).second;
   }

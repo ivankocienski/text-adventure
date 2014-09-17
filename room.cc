@@ -11,21 +11,10 @@ using namespace std;
 namespace ta {
 
   Room::Room( const string &n, const vector<string> &dl ) : m_name(n), m_description(dl) {
-
-    m_exit_north = NULL;
-    m_exit_south = NULL;
-    m_exit_east  = NULL;
-    m_exit_west  = NULL;
   }
 
   Room::Room() { 
-
-    m_exit_north = NULL;
-    m_exit_south = NULL;
-    m_exit_east  = NULL;
-    m_exit_west  = NULL;
   }
-
 
   string Room::name() {
     return m_name;
@@ -41,20 +30,20 @@ namespace ta {
       i.puts(*it);
     } 
     
-    if(m_exit_north) {
-      i.puts( "To the north there is " + m_exit_north->m_name );
+    if(m_exit_north.isset()) {
+      i.puts( "To the north there is " + m_exit_north.target()->name() );
     }
 
-    if(m_exit_east) {
-      i.puts( "To the east there is " + m_exit_east->m_name );
+    if(m_exit_east.isset()) {
+      i.puts( "To the east there is " + m_exit_east.target()->name() );
     }
 
-    if(m_exit_south) {
-      i.puts( "To the south there is " + m_exit_south->m_name );
+    if(m_exit_south.isset()) {
+      i.puts( "To the south there is " + m_exit_south.target()->name() );
     }
 
-    if(m_exit_west) {
-      i.puts( "To the west there is " + m_exit_west->m_name );
+    if(m_exit_west.isset()) {
+      i.puts( "To the west there is " + m_exit_west.target()->name() );
     }
 
     if(m_items.size() ) {
@@ -90,37 +79,21 @@ namespace ta {
     m_items.erase(it);
   }
 
-  void Room::exit_north( Room* r ) {
-    m_exit_north = r; 
+  Exit & Room::exit_north() {
+    return m_exit_north;
   }
 
-  void Room::exit_south( Room* r ) {
-    m_exit_south = r; 
+  Exit & Room::exit_south() {
+    return m_exit_south;
   }
 
-  void Room::exit_east( Room* r ) {
-    m_exit_east = r; 
+  Exit & Room::exit_east() {
+    return m_exit_east;
   }
 
-  void Room::exit_west( Room* r ) {
-    m_exit_west = r; 
-  }
-  
-  Room* Room::get_north_exit() {
-    return m_exit_north; 
-  }
-
-  Room* Room::get_south_exit() {
-    return m_exit_south; 
-  }
-
-  Room* Room::get_east_exit() {
-    return m_exit_east; 
-  }
-
-  Room* Room::get_west_exit() {
+  Exit & Room::exit_west() {
     return m_exit_west;
   }
-
+  
 
 }; // namespace ta

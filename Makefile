@@ -15,6 +15,7 @@ SOURCES= \
 	loader.cc \
 	item.cc \
 	description.cc \
+	exit.cc \
 	sdl/screen.cc \
 	sdl/event.cc \
 	sdl/surface.cc
@@ -32,7 +33,7 @@ clean:
 	rm -f $(EXE)
 	rm -f *.o
 
-tags:
+tags: FORCE
 	ctags *.cc *.hh
 
-
+FORCE:

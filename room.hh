@@ -6,9 +6,9 @@
 
 #include "interface.hh"
 #include "description.hh"
+#include "exit.hh"
 
-namespace ta {
-
+namespace ta { 
 
   class Room {
 
@@ -20,10 +20,10 @@ namespace ta {
       std::vector<std::string> m_description;
       std::vector<std::string> m_items;
 
-      Room *m_exit_north;
-      Room *m_exit_south;
-      Room *m_exit_east;
-      Room *m_exit_west;
+      Exit m_exit_north;
+      Exit m_exit_south;
+      Exit m_exit_east;
+      Exit m_exit_west;
 
     public:
 
@@ -32,21 +32,15 @@ namespace ta {
 
       std::string name();
       void describe( Interface&);
-
-      void exit_north( Room* );
-      void exit_south( Room* );
-      void exit_east( Room* );
-      void exit_west( Room* );
+      
+      Exit & exit_north();
+      Exit & exit_south();
+      Exit & exit_east();
+      Exit & exit_west();
 
       void place_item(   const std::string& );
       bool has_item(     const std::string& );
       void discard_item( const std::string& );
-
-
-      Room* get_north_exit();
-      Room* get_south_exit();
-      Room* get_east_exit();
-      Room* get_west_exit();
   };
 
 }; // namespace ta

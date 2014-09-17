@@ -10,6 +10,9 @@
 #include "world.hh"
 #include "player.hh"
 #include "description.hh"
+#include "exit.hh"
+
+/* i hope this does not turn into a shitty lisp implementation... */
 
 using namespace std;
 
@@ -87,6 +90,51 @@ namespace ta {
     }
   }
 
+  void Loader::parse_exit( exit_t &exit, Parser &parser ) {
+
+    if( exit.assigned ) {
+      moan( parser, "exit is already defined in ROOM" );
+      return;
+    }
+
+    exit.line = parser.line_number();
+    exit.assigned = true;
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in EXIT" );
+          return;
+
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string in EXIT" );
+          break; 
+
+        case Parser::TT_TOKEN:
+          switch( parser.token_code() ) {
+
+            case TC_ENDEXIT:
+              return;
+
+            case TC_GOTO: 
+              set_decleration( exit.room_goto, parser );
+              break;
+
+            case TC_DESCRIBE:
+              parse_describe( exit.description, parser );
+              break;
+
+            default:
+              moan( parser, "bad token at EXIT" );
+              break;
+          }
+
+          break;
+      }
+    }
+  }
+
   void Loader::parse_room( Parser &parser ) {
 
     room_t &room = m_rooms[ parser.first_match() ];
@@ -115,19 +163,19 @@ namespace ta {
 
               string dir = parser.first_match();
               if( dir == "north" )
-                set_decleration( room.exit_north, parser );
+                parse_exit( room.exit_north, parser );
               else
               //
               if( dir == "south" )
-                set_decleration( room.exit_south, parser );
+                parse_exit( room.exit_south, parser );
               else
               //
               if( dir == "east" )
-                set_decleration( room.exit_east, parser );
+                parse_exit( room.exit_east, parser );
               else
               //
               if( dir == "west" )
-                set_decleration( room.exit_west, parser );
+                parse_exit( room.exit_west, parser );
               //
               else
                 moan( parser, "unknown direction for exit in ROOM" );
@@ -263,6 +311,30 @@ namespace ta {
     } 
   }
 
+  bool Loader::upload_exit( Exit& exit, exit_t& from ) {
+
+    if( !from.assigned ) return false;
+
+    if( from.description.assigned )
+      upload_description( exit.description(), from.description );
+
+    if( from.room_goto.assigned ) {
+
+      string name = from.room_goto.parts[0];
+      cout << "GOTO " << name << endl;
+
+      Room *other = m_world->get( name );
+      if( !other ) {
+        moan( from.room_goto, "could not lookup ROOM " + name + " in GOTO" );
+        return false;
+      }
+
+      exit.set_target( other ); 
+    }
+        
+    return true; 
+  }
+
   void Loader::upload() {
 
     m_world->set_name(      m_globals.name.parts.front() );
@@ -284,6 +356,8 @@ namespace ta {
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
+      int exit_count   = 0;
+
       room_t &rd = (*ri).second;
 
       Room *r = m_world->get( rd.name.value() );
@@ -294,31 +368,20 @@ namespace ta {
         r->place_item( id.value() );
       }
 
-      if( rd.exit_north.assigned ) {
-        Room *other = m_world->get( rd.exit_north.parts[1] );
-        r->exit_north( other );
-        continue; 
-      }
+      if( upload_exit( r->exit_north(), rd.exit_north ) )
+        exit_count++;
 
-      if( rd.exit_south.assigned ) {
-        Room *other = m_world->get( rd.exit_south.parts[1] );
-        r->exit_south( other );
-        continue; 
-      }
+      if( upload_exit( r->exit_south(), rd.exit_south ) )
+        exit_count++;
 
-      if( rd.exit_east.assigned ) {
-        Room *other = m_world->get( rd.exit_east.parts[1] );
-        r->exit_east( other );
-        continue; 
-      }
+      if( upload_exit( r->exit_east(), rd.exit_east ) )
+        exit_count++;
 
-      if( rd.exit_west.assigned ) {
-        Room *other = m_world->get( rd.exit_west.parts[1] );
-        r->exit_west( other );
-        continue; 
-      }
+      if( upload_exit( r->exit_west(), rd.exit_west ) )
+        exit_count++;
 
-      moan( rd.name, "no exits defined in room" );
+      if( exit_count == 0 )
+        moan( rd.name, "no exits defined in room" );
     }
 
     Room *r = m_world->get( m_globals.start.value() );
@@ -337,7 +400,7 @@ namespace ta {
     parser.define_matcher( TC_START,       "^%START\\s+(.+)" );
     parser.define_matcher( TC_ROOM,        "^%ROOM\\s+(.+)" );
     parser.define_matcher( TC_DESCRIBE,    "^%DESCRIBE\\b" );
-    parser.define_matcher( TC_EXIT,        "^%EXIT\\s+(\\w+)\\s+(\\w+)" );
+    parser.define_matcher( TC_EXIT,        "^%EXIT\\s+(\\w+)" );
     parser.define_matcher( TC_ENDDESCRIBE, "^%ENDDESCRIBE\\b" );
     parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
     parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
@@ -345,6 +408,8 @@ namespace ta {
     parser.define_matcher( TC_INTRO,       "^%INTRO\\b" );
     parser.define_matcher( TC_ENDINTRO,    "^%ENDINTRO\\b" );
     parser.define_matcher( TC_PAUSE,       "^%PAUSE\\b" );
+    parser.define_matcher( TC_GOTO,        "^%GOTO\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDEXIT,     "^%ENDEXIT\\b" );
 
     parse_toplevel( parser );
 

@@ -8,6 +8,7 @@
 #include <boost/regex.hpp>
 
 #include "description.hh"
+#include "exit.hh"
 
 namespace ta {
   
@@ -65,6 +66,7 @@ namespace ta {
       bool   assigned;
  
       decleration() { assigned = false; }
+
       std::string& value() { return parts[0]; }
     } decleration_t;
 
@@ -78,14 +80,25 @@ namespace ta {
       decleration_t introduction;
     } global_t, *p_global_t;
 
+    typedef struct exit_s {
+      bool assigned;
+      size_t line;
+
+      exit_s() : assigned( false ), line( 0 ) {}
+
+      decleration_t room_goto;
+      decleration_t description; 
+    } exit_t;
+
     typedef struct room_s {
 
       decleration_t name; 
       decleration_t description; 
-      decleration_t exit_north;
-      decleration_t exit_south;
-      decleration_t exit_east;
-      decleration_t exit_west; 
+
+      exit_t exit_north;
+      exit_t exit_south;
+      exit_t exit_east;
+      exit_t exit_west; 
 
       decleration_map_t items;
     } room_t, *p_room_t;
@@ -117,7 +130,9 @@ namespace ta {
       TC_VERSION,
       TC_INTRO,
       TC_ENDINTRO,
-      TC_PAUSE
+      TC_PAUSE,
+      TC_ENDEXIT,
+      TC_GOTO 
     };
 
     void moan( const Parser&, const std::string& );
@@ -127,11 +142,13 @@ namespace ta {
 
     void parse_describe( decleration_t&, Parser& );
 
+    void parse_exit( exit_t&, Parser& );
     void parse_room( Parser& );
     void parse_intro( Parser& );
     void parse_toplevel( Parser& );
 
     void upload_description( Description&, decleration_t& );
+    bool upload_exit( Exit&, exit_t& );
     void upload();
 
   public:

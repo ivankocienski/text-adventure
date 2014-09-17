@@ -10,8 +10,7 @@ using namespace std;
 
 namespace ta {
 
-  Description::Description() {
-
+  Description::Description() { 
   }
 
   void Description::push_string( string& s ) {

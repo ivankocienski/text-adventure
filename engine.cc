@@ -43,41 +43,51 @@ namespace ta {
 
     if(words[0] == "help") {
       show_help();
+      return;
     }
 
     if(words[0] == "holding" ) {
       m_player.show_holding(m_interface);
+      return;
     }
 
     if(words[0] == "pickup" ) {
       m_player.pickup( words, m_interface );
+      return;
     }
 
     if(words[0] == "putdown" ) {
       m_player.putdown( words, m_interface );
+      return;
     }
 
     if(words[0] == "use" ) {
       m_player.use_item( words, m_interface );
+      return;
     } 
 
     if(words[0] == "intro") {
       m_world.introduce( m_interface );
+      return;
     }
 
     if(words[0] == "describe") {
       m_player.describe( m_interface );
+      return;
     }
 
     if(words[0] == "go") {
       m_player.go( words, m_interface );
       m_player.describe( m_interface );
+      return;
     }
 
     if(words[0] == "quit") {
       //...
       exit(0);
     }
+
+    m_interface.puts( 1, "Did not understand you" );
 
   }
 
@@ -101,8 +111,8 @@ namespace ta {
       if( words.size() == 0 ) continue;
 
       m_interface.puts( Interface::C_LIGHT_GREY, input );
-
       handle_input( words );
+      m_interface.puts( "" );
     }
 
   }

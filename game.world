@@ -35,7 +35,16 @@
     mortality. Beware the darkest corners, for you never know what may pop up.
   %ENDDESCRIBE
 
-  %EXIT north hall
+  %EXIT south
+    
+    %GOTO hall
+
+    # does this describe the door, or what is on the other side of the exit?
+    %DESCRIBE
+      Descriptions should not be blank?
+    %ENDDESCRIBE
+
+  %ENDEXIT
 
   %ITEM key
 
@@ -51,7 +60,13 @@
     torturer.
   %ENDDESCRIBE
 
-  # this could get complicated...
-  %EXIT south dungeon
+  %EXIT north
+    
+    %GOTO dungeon
+
+    %DESCRIBE
+      Its okay.
+    %ENDDESCRIBE
+  %ENDEXIT
 
 %ENDROOM

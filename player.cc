@@ -39,57 +39,49 @@ namespace ta {
 
     if( dir == "north" ) {
 
-      Room *r = m_room->get_north_exit();
-      if( !r ) {
-        i.puts( "There is no north exit" );
+      if( m_room->exit_north().isset() ) {
+        m_room = m_room->exit_north().target();
 
-      } else {
-        m_room = r;
-      }
+      } else 
+        i.puts( 1, "There is no north exit" ); 
 
       return; 
     }
 
     if( dir == "south" ) {
 
-      Room *r = m_room->get_south_exit();
-      if( !r ) {
-        i.puts( "There is no south exit" );
+      if( m_room->exit_south().isset() ) {
+        m_room = m_room->exit_south().target();
 
-      } else {
-        m_room = r;
-      }
+      } else 
+        i.puts( 1, "There is no south exit" );
 
       return; 
     }
 
     if( dir == "east" ) {
 
-      Room *r = m_room->get_east_exit();
-      if( !r ) {
-        i.puts( "There is no east exit" );
+      if( m_room->exit_east().isset() ) {
+        m_room = m_room->exit_east().target();
 
-      } else {
-        m_room = r;
-      }
+      } else 
+        i.puts( 1, "There is no east exit" );
 
       return; 
     }
 
     if( dir == "west" ) {
 
-      Room *r = m_room->get_west_exit();
-      if( !r ) {
-        i.puts( "There is no west exit" );
+      if( m_room->exit_west().isset() ) {
+        m_room = m_room->exit_west().target();
 
-      } else {
-        m_room = r;
-      }
+      } else
+        i.puts( 1, "There is no west exit" );
 
       return; 
     }
 
-    i.puts( "I do not know direction '" + dir + "'" );
+    i.puts( 1, "I do not know direction '" + dir + "'" );
   }
 
   void Player::show_holding( Interface &i ) {
