@@ -52,6 +52,8 @@ namespace ta {
 
       bool m_get_events;
       bool m_repaint;
+      bool m_cursor_show;
+      int  m_cursor_count;
 
       void handle_char(int);
       void draw_buffer();

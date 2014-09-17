@@ -14,6 +14,8 @@ using namespace std;
 namespace ta {
   
   Interface::Interface() : m_screen( new SDL::Screen ), m_debug_font( m_screen ) { 
+    m_cursor_show  = true;
+    m_cursor_count = 20;
   }
 
   Interface::~Interface() {
@@ -55,6 +57,15 @@ namespace ta {
 
     while(m_get_events) {
 
+      if(m_cursor_count) {
+        m_cursor_count--;
+
+      } else {
+        m_cursor_count = 20;
+        m_cursor_show  = !m_cursor_show;
+        m_repaint = true; 
+      }
+
       while(event.poll()) {
         switch (event.type()) {
 
@@ -92,8 +103,6 @@ namespace ta {
     for( std::list<char>::iterator it = m_buffer.begin(); it != m_buffer.end(); it++) 
       ret[pos++] = *it;
 
-    puts( C_LIGHT_GREY, ret );
-
     return ret;
   }
 
@@ -103,7 +112,7 @@ namespace ta {
 
     m_history.push_front(hs); 
 
-    if(m_history.size() > 10) 
+    if(m_history.size() > 51) 
       m_history.pop_back();
   }
 
@@ -112,7 +121,7 @@ namespace ta {
   }
 
   void Interface::draw_history() {
-    int pos = 54;
+    int pos = 53;
 
     list<struct history_s>::iterator it = m_history.begin();
 
@@ -140,11 +149,16 @@ namespace ta {
       x++;
       c++; 
     }
+
+    if(m_cursor_show)
+      m_screen->fill_rect( x * 8, 58 * 8, 8, 8, 7);
   }
 
   void Interface::handle_char( int c ) {
 
-    cout << "c=" << c << endl;
+    //cout << "c=" << c << endl;
+    m_cursor_show  = true;
+    m_cursor_count = 20;
 
     switch(c) {
       case 0:

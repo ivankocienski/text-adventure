@@ -50,5 +50,12 @@ namespace SDL {
       src.surface()->format->palette->ncolors 
     ); 
   }
+
+  void Screen::fill_rect( int x, int y, int w, int h, int c ) {
+
+    SDL_Rect r = { x, y, w, h };
+
+    SDL_FillRect( m_screen, &r, c );
+  }
 };
 

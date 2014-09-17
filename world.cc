@@ -51,7 +51,6 @@ namespace ta {
     i.puts( m_name );
     i.puts( "by " + m_author );
     i.puts( "(c) " + m_copyright );
-    i.puts("");
 
   }
 

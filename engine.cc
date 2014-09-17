@@ -100,6 +100,8 @@ namespace ta {
 
       if( words.size() == 0 ) continue;
 
+      m_interface.puts( Interface::C_LIGHT_GREY, input );
+
       handle_input( words );
     }
 

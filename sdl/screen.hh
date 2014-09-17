@@ -26,6 +26,8 @@ namespace SDL {
     void blit( int, int, const Surface& );
     void blit( SDL_Rect&, const Surface&, SDL_Rect& );
     void load_palette( const Surface& );
+
+    void fill_rect( int, int, int, int, int );
   };
 
 };
