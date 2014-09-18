@@ -21,9 +21,6 @@ namespace ta {
 
     boost::unordered_set<std::string> m_knapsack;
 
-    void try_go( Interface&, Exit&, const std::string & );
-    void try_unlock( Interface&, Exit&, const std::string& );
-
   public:
     
     Player(World*);

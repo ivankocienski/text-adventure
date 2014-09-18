@@ -21,9 +21,11 @@ namespace ta {
     return m_name;
   }
 
-  void Room::describe( Interface &i ) {
+  map<string, Exit> & Room::exits() {
+    return m_exits;
+  }
 
-    i.puts( "You are standing in " + m_name );
+  void Room::describe( Interface &i ) {
 
     {
       vector<string>::iterator it;
@@ -33,20 +35,13 @@ namespace ta {
       } 
     }
     
-    if(m_exit_north.isset()) {
-      i.puts( "To the north there is " + m_exit_north.target()->name() );
-    }
+    if( m_exits.size() ) {
+      map<string, Exit>::iterator it;
 
-    if(m_exit_east.isset()) {
-      i.puts( "To the east there is " + m_exit_east.target()->name() );
-    }
-
-    if(m_exit_south.isset()) {
-      i.puts( "To the south there is " + m_exit_south.target()->name() );
-    }
-
-    if(m_exit_west.isset()) {
-      i.puts( "To the west there is " + m_exit_west.target()->name() );
+      i.puts( 7, "You can go" );
+      for( it = m_exits.begin(); it != m_exits.end(); it++ ) {
+        i.puts( 7, "  " + (*it).first );
+      }
     }
 
     if( m_items.size() ) {
@@ -64,22 +59,5 @@ namespace ta {
   boost::unordered_set<string> & Room::items() {
     return m_items;
   }
-
-  Exit & Room::exit_north() {
-    return m_exit_north;
-  }
-
-  Exit & Room::exit_south() {
-    return m_exit_south;
-  }
-
-  Exit & Room::exit_east() {
-    return m_exit_east;
-  }
-
-  Exit & Room::exit_west() {
-    return m_exit_west;
-  }
-  
 
 }; // namespace ta

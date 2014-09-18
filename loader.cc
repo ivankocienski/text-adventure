@@ -164,27 +164,10 @@ namespace ta {
               return;
 
             case TC_EXIT: {
-
               string dir = parser.first_match();
-              if( dir == "north" )
-                parse_exit( room.exit_north, parser );
-              else
-              //
-              if( dir == "south" )
-                parse_exit( room.exit_south, parser );
-              else
-              //
-              if( dir == "east" )
-                parse_exit( room.exit_east, parser );
-              else
-              //
-              if( dir == "west" )
-                parse_exit( room.exit_west, parser );
-              //
-              else
-                moan( parser, "unknown direction for exit in ROOM" );
-
-              } break;
+              parse_exit( room.exits[dir], parser );
+              }
+              break;
               
             case TC_ITEM:
               set_decleration( room.items[ parser.first_match() ], parser ); 
@@ -364,8 +347,6 @@ namespace ta {
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
-      int exit_count   = 0;
-
       room_t &rd = (*ri).second;
 
       Room *r = m_world->get( rd.name.value() );
@@ -376,19 +357,15 @@ namespace ta {
         r->items().insert( id.value() );
       }
 
-      if( upload_exit( r->exit_north(), rd.exit_north ) )
-        exit_count++;
+      for( map<string, exit_t>::iterator it = rd.exits.begin(); it != rd.exits.end(); it++ ) {
 
-      if( upload_exit( r->exit_south(), rd.exit_south ) )
-        exit_count++;
+        string name = (*it).first;
+        exit_t & et   = (*it).second;
 
-      if( upload_exit( r->exit_east(), rd.exit_east ) )
-        exit_count++;
+        upload_exit( r->exits()[name], et );
+      }
 
-      if( upload_exit( r->exit_west(), rd.exit_west ) )
-        exit_count++;
-
-      if( exit_count == 0 )
+      if( rd.exits.size() == 0 )
         moan( rd.name, "no exits defined in room" );
     }
 

@@ -96,10 +96,12 @@ namespace ta {
       decleration_t name; 
       decleration_t description; 
 
-      exit_t exit_north;
-      exit_t exit_south;
-      exit_t exit_east;
-      exit_t exit_west; 
+      std::map<std::string, exit_t> exits;
+/*       exit_t exit_north;
+ *       exit_t exit_south;
+ *       exit_t exit_east;
+ *       exit_t exit_west; 
+ */
 
       decleration_map_t items;
     } room_t, *p_room_t;

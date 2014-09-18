@@ -22,10 +22,7 @@ namespace ta {
       
       boost::unordered_set<std::string> m_items;
 
-      Exit m_exit_north;
-      Exit m_exit_south;
-      Exit m_exit_east;
-      Exit m_exit_west;
+      std::map<std::string, Exit> m_exits;
 
     public:
 
@@ -35,10 +32,7 @@ namespace ta {
       std::string name();
       void describe( Interface&);
       
-      Exit & exit_north();
-      Exit & exit_south();
-      Exit & exit_east();
-      Exit & exit_west();
+      std::map<std::string, Exit> & exits();
 
       boost::unordered_set<std::string>& items();
   };

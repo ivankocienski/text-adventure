@@ -31,7 +31,6 @@ namespace ta {
       };
 
       Exit();
-      bool isset(); 
 
       void set_lock( std::string& );
       bool islocked();

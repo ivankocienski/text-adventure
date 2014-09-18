@@ -16,10 +16,6 @@ namespace ta {
     m_locked = false;
   }
 
-  bool Exit::isset() {
-    return m_target != NULL;
-  }
-
   bool Exit::islocked() {
     return m_locked;
   }

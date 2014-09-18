@@ -30,22 +30,6 @@ namespace ta {
     m_room->describe(i);
   }
 
-  void Player::try_go( Interface &i, Exit &exit, const string &dir ) {
-    
-    if( !exit.isset() ) {
-      i.puts( 1, "There is no " + dir + " exit" ); 
-      return;
-    }
-
-    if( exit.islocked() ) {
-      i.puts( 1, "This door is locked, you need " + exit.locked_with() + " to unlock" );
-      return;
-    }
-
-    m_room = exit.target();
-    where(i); 
-  }
-
   void Player::go( const std::vector<std::string>& words, Interface &i ) {
 
     if( words.size() < 2 ) {
@@ -55,27 +39,20 @@ namespace ta {
 
     string dir = words[1];
 
-    if( dir == "north" ) {
-      try_go( i, m_room->exit_north(), "north" ); 
+    if( m_room->exits().count(dir) == 0 ) {
+      i.puts( 1, "I do not know direction " + dir );
       return; 
     }
 
-    if( dir == "south" ) {
-      try_go( i, m_room->exit_south(), "south" );
-      return; 
+    Exit & exit = m_room->exits()[dir];
+
+    if( exit.islocked() ) {
+      i.puts( 1, "This door is locked, you need " + exit.locked_with() + " to unlock" );
+      return;
     }
 
-    if( dir == "east" ) {
-      try_go( i, m_room->exit_east(), "east" ); 
-      return; 
-    }
-
-    if( dir == "west" ) {
-      try_go( i, m_room->exit_west(), "west" );
-      return; 
-    }
-
-    i.puts( 1, "I do not know direction " + dir );
+    m_room = exit.target();
+    where(i); 
   }
 
   void Player::show_holding( Interface &i ) {
@@ -148,12 +125,21 @@ namespace ta {
     i.puts( 7, "You are standing in " + m_room->name() ); 
   }
 
-  void Player::try_unlock( Interface &i, Exit &exit, const string& dir ) {
+  void Player::unlock( const std::vector<std::string>& words, Interface &i ) {
 
-    if( !exit.isset() ) {
-      i.puts( 1, "There is no door " + dir );
+    if( words.size() < 2 ) {
+      i.puts( 1, "What should I unlock, sir?" );
       return;
     }
+
+    string dir = words[1];
+
+    if( m_room->exits().count(dir) == 0 ) { 
+      i.puts( 1, "Did not understand direction " + dir );
+      return;
+    }
+
+    Exit & exit = m_room->exits()[dir];
 
     switch( exit.unlock( m_knapsack ) ) {
 
@@ -173,38 +159,6 @@ namespace ta {
         i.puts( 7, "The " + dir + " door has been unlocked" );
         break;
     }
-  }
-
-  void Player::unlock( const std::vector<std::string>& words, Interface &i ) {
-
-    if( words.size() < 2 ) {
-      i.puts( 1, "What should I unlock, sir?" );
-      return;
-    }
-
-    string dir = words[1];
-
-    if( dir == "north" ) {
-      try_unlock( i, m_room->exit_north(), "north" );
-      return;
-    }
-    
-    if( dir == "south" ) {
-      try_unlock( i, m_room->exit_south(), "south" );
-      return;
-    }
-
-    if( dir == "east" ) {
-      try_unlock( i, m_room->exit_east(), "east" );
-      return;
-    }
-
-    if( dir == "west" ) {
-      try_unlock( i, m_room->exit_west(), "west" );
-      return;
-    }
-
-    i.puts( 1, "Did not understand direction " + dir );
   }
 
 }; // namespace ta;
