@@ -2,11 +2,13 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <boost/unordered_set.hpp>
 
 #include "interface.hh"
 #include "player.hh"
 #include "world.hh"
 #include "room.hh"
+#include "exit.hh"
 
 using namespace std;
 
@@ -28,117 +30,181 @@ namespace ta {
     m_room->describe(i);
   }
 
-  void Player::go( const std::vector<std::string>& words, Interface &i ) {
-
-    string dir = words[1];
-
-    if(dir.empty()) {
-      i.puts( "Which direction should I go in, sir?" );
+  void Player::try_go( Interface &i, Exit &exit, const string &dir ) {
+    
+    if( !exit.isset() ) {
+      i.puts( 1, "There is no " + dir + " exit" ); 
       return;
     }
 
+    if( exit.islocked() ) {
+      i.puts( 1, "This door is locked" );
+      return;
+    }
+
+    m_room = m_room->exit_north().target();
+    where(i); 
+  }
+
+  void Player::go( const std::vector<std::string>& words, Interface &i ) {
+
+    if( words.size() < 2 ) {
+      i.puts( 1, "Which direction should I go in, sir?" );
+      return;
+    }
+
+    string dir = words[1];
+
     if( dir == "north" ) {
-
-      if( m_room->exit_north().isset() ) {
-        m_room = m_room->exit_north().target();
-
-      } else 
-        i.puts( 1, "There is no north exit" ); 
-
+      try_go( i, m_room->exit_north(), "north" ); 
       return; 
     }
 
     if( dir == "south" ) {
-
-      if( m_room->exit_south().isset() ) {
-        m_room = m_room->exit_south().target();
-
-      } else 
-        i.puts( 1, "There is no south exit" );
-
+      try_go( i, m_room->exit_south(), "south" );
       return; 
     }
 
     if( dir == "east" ) {
-
-      if( m_room->exit_east().isset() ) {
-        m_room = m_room->exit_east().target();
-
-      } else 
-        i.puts( 1, "There is no east exit" );
-
+      try_go( i, m_room->exit_east(), "east" ); 
       return; 
     }
 
     if( dir == "west" ) {
-
-      if( m_room->exit_west().isset() ) {
-        m_room = m_room->exit_west().target();
-
-      } else
-        i.puts( 1, "There is no west exit" );
-
+      try_go( i, m_room->exit_west(), "west" );
       return; 
     }
 
-    i.puts( 1, "I do not know direction '" + dir + "'" );
+    i.puts( 1, "I do not know direction " + dir );
   }
 
   void Player::show_holding( Interface &i ) {
 
-    if( m_holding.size() == 0 ) {
+    if( m_knapsack.size() == 0 ) {
       i.puts( "You are not holding anything" );
       return;
     }
 
-    vector<string>::iterator it;
+    boost::unordered_set<string>::iterator it;
 
     i.puts( "You are holding" );
-    for( it = m_holding.begin(); it != m_holding.end(); it++ ) {
+    for( it = m_knapsack.begin(); it != m_knapsack.end(); it++ ) {
       i.puts( "  " + *it ); 
     }
   }
 
   void Player::pickup( const std::vector<std::string>& words, Interface &i ) {
 
-    string what = words[1];
-
-    if( !m_room->has_item( what ) ) {
-      i.puts( "could not find '" + what + "' to pick up" );
+    if( words.size() < 2 ) {
+      i.puts( 1, "What should be picked up?" );
       return;
     }
 
-    m_room->discard_item( what ); 
+    string what = words[1];
 
-    m_holding.push_back( what );
+    if( m_knapsack.count( what ) ) {
+      i.puts( 1, "You are already holding " + what );
+      return;
+    }
+
+    if( !m_room->items().count( what ) ) {
+      i.puts( 1, "Could not find '" + what + "' to pick up" );
+      return;
+    }
+
+    m_room->items().erase( what ); 
+    m_knapsack.insert( what );
+
+    i.puts( 7, "You have picked up " + what );
   }
 
   void Player::putdown( const std::vector<std::string>& words, Interface &i ) {
 
+    if( words.size() < 2 ) {
+      i.puts( 1, "What should be put down?" );
+      return;
+    }
+
     string what = words[1];
 
-    if( what == "" ) {
-      i.puts( "Pick up what, sir?" );
+    if( m_knapsack.count( what ) == 0 ) {
+      i.puts( 1, "You are not holding that" );
       return;
     }
 
-    vector<string>::iterator it;
-
-    it = find( m_holding.begin(), m_holding.end(), what );
-
-    if( it == m_holding.end() ) {
-      i.puts( "You are not holding that" );
+    if( m_room->items().count( what ) ) {
+      i.puts( 1, "There is already a " + what + " in this room" );
       return;
     }
 
-    m_holding.erase( it );
+    m_knapsack.erase( what );
+    m_room->items().insert( what );
 
-    m_room->has_item( what );
+    i.puts( 7, "You have put down " + what );
 
   }
 
-  void Player::use_item( const std::vector<std::string>& words, Interface &i ) {
+  void Player::where( Interface &i ) {
+    i.puts( 7, "You are standing in " + m_room->name() ); 
+  }
 
+  void Player::try_unlock( Interface &i, Exit &exit, const string& dir ) {
+
+    if( !exit.isset() ) {
+      i.puts( 1, "There is no door " + dir );
+      return;
+    }
+
+    switch( exit.unlock( m_knapsack ) ) {
+
+      case Exit::LR_NOTLOCKED:
+        i.puts( 1, "That door was not locked" );
+        break;
+
+      case Exit::LR_NOLOCK:
+        i.puts( 1, "That door does not have a lock" );
+        break;
+
+      case Exit::LR_NOTKEY:
+        i.puts( 1, "You do not have the key for the " + dir + " door" );
+        break;
+
+      case Exit::LR_UNLOCKED:
+        i.puts( 7, "The " + dir + " door has been unlocked" );
+        break;
+    }
+  }
+
+  void Player::unlock( const std::vector<std::string>& words, Interface &i ) {
+
+    if( words.size() < 2 ) {
+      i.puts( 1, "What should I unlock, sir?" );
+      return;
+    }
+
+    string dir = words[1];
+
+    if( dir == "north" ) {
+      try_unlock( i, m_room->exit_north(), "north" );
+      return;
+    }
+    
+    if( dir == "south" ) {
+      try_unlock( i, m_room->exit_south(), "south" );
+      return;
+    }
+
+    if( dir == "east" ) {
+      try_unlock( i, m_room->exit_east(), "east" );
+      return;
+    }
+
+    if( dir == "west" ) {
+      try_unlock( i, m_room->exit_west(), "west" );
+      return;
+    }
+
+    i.puts( 1, "Did not understand direction " + dir );
   }
 
 }; // namespace ta;

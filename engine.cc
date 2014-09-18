@@ -27,6 +27,7 @@ namespace ta {
     m_interface.puts( "ADVENTURE (v0)" );
 
     m_world.introduce(m_interface);
+    m_interface.puts("");
   }
 
   void Engine::show_help() {
@@ -61,8 +62,8 @@ namespace ta {
       return;
     }
 
-    if(words[0] == "use" ) {
-      m_player.use_item( words, m_interface );
+    if(words[0] == "unlock" ) {
+      m_player.unlock( words, m_interface );
       return;
     } 
 
@@ -93,10 +94,11 @@ namespace ta {
 
   void Engine::run() {
 
-    boost::regex space_r( "\\r+" );
+    boost::regex space_r( "\\s+" );
     vector<string> words;
 
     announce();
+    m_player.where( m_interface );
 
     while(true) {
 

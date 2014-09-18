@@ -54,6 +54,7 @@ namespace ta {
       bool m_repaint;
       bool m_cursor_show;
       int  m_cursor_count;
+      int  m_hold_count;
 
       void handle_char(int);
       void draw_buffer();

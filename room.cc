@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <boost/unordered_set.hpp>
 
 using namespace std;
 
@@ -24,11 +25,13 @@ namespace ta {
 
     i.puts( "You are standing in " + m_name );
 
-    vector<string>::iterator it;
+    {
+      vector<string>::iterator it;
 
-    for(it = m_description.begin(); it != m_description.end(); it++) {
-      i.puts(*it);
-    } 
+      for(it = m_description.begin(); it != m_description.end(); it++) {
+        i.puts(*it);
+      } 
+    }
     
     if(m_exit_north.isset()) {
       i.puts( "To the north there is " + m_exit_north.target()->name() );
@@ -46,8 +49,11 @@ namespace ta {
       i.puts( "To the west there is " + m_exit_west.target()->name() );
     }
 
-    if(m_items.size() ) {
-      i.puts( "In room you can see" );
+    if( m_items.size() ) {
+
+      boost::unordered_set<string>::iterator it;
+
+      i.puts( "You can see" );
       for(it = m_items.begin(); it != m_items.end(); it++ ) {
         i.puts( "  " + *it );
       }
@@ -55,28 +61,8 @@ namespace ta {
     
   }
 
-  void Room::place_item( const string &s ) {
-    m_items.push_back(s);
-  }
-
-  bool Room::has_item( const string &s ) {
-    vector<string>::iterator it;
-
-    it = find( m_items.begin(), m_items.end(), s ); 
-
-    return it != m_items.end();
-  }
-
-  void Room::discard_item( const string &s ) {
-
-    vector<string>::iterator it;
-
-    it = find( m_items.begin(), m_items.end(), s );
-
-    if( it == m_items.end() )
-      return;
-
-    m_items.erase(it);
+  boost::unordered_set<string> & Room::items() {
+    return m_items;
   }
 
   Exit & Room::exit_north() {

@@ -1,8 +1,13 @@
 
+#include <string>
+#include <boost/unordered_set.hpp>
+
 #include "description.hh"
 #include "interface.hh"
 #include "room.hh"
 #include "exit.hh"
+
+using namespace std;
 
 namespace ta {
   
@@ -12,6 +17,10 @@ namespace ta {
 
   bool Exit::isset() {
     return m_target != NULL;
+  }
+
+  bool Exit::islocked() {
+    return m_locked;
   }
 
   Description& Exit::description() {
@@ -28,6 +37,28 @@ namespace ta {
 
   Room* Exit::target() {
     return m_target;
+  }
+
+  void Exit::set_lock( string &l ) {
+    m_locked      = true;
+    m_unlock_with = l;
+  }
+
+  Exit::lock_response Exit::unlock( boost::unordered_set<string> &ks ) {
+
+    if( m_unlock_with == "" )
+      return LR_NOLOCK;
+
+    if( !m_locked) 
+      return LR_NOTLOCKED;
+
+    if( !ks.count( m_unlock_with ) )
+      return LR_NOTKEY;
+
+    ks.erase( m_unlock_with );
+    m_locked = false;
+
+    return LR_UNLOCKED; 
   }
 
 };

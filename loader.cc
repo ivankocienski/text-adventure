@@ -121,6 +121,10 @@ namespace ta {
               set_decleration( exit.room_goto, parser );
               break;
 
+            case TC_LOCKEDBY:
+              set_decleration( exit.locked_by, parser );
+              break;
+
             case TC_DESCRIBE:
               parse_describe( exit.description, parser );
               break;
@@ -318,10 +322,12 @@ namespace ta {
     if( from.description.assigned )
       upload_description( exit.description(), from.description );
 
+    if( from.locked_by.assigned ) 
+      exit.set_lock( from.locked_by.value() );
+
     if( from.room_goto.assigned ) {
 
-      string name = from.room_goto.parts[0];
-      cout << "GOTO " << name << endl;
+      string name = from.room_goto.value();
 
       Room *other = m_world->get( name );
       if( !other ) {
@@ -365,7 +371,7 @@ namespace ta {
       for( decleration_map_t::iterator it = rd.items.begin(); it != rd.items.end(); it++ ) {
 
         decleration_t &id = (*it).second;
-        r->place_item( id.value() );
+        r->items().insert( id.value() );
       }
 
       if( upload_exit( r->exit_north(), rd.exit_north ) )
@@ -410,6 +416,7 @@ namespace ta {
     parser.define_matcher( TC_PAUSE,       "^%PAUSE\\b" );
     parser.define_matcher( TC_GOTO,        "^%GOTO\\s+(\\w+)" );
     parser.define_matcher( TC_ENDEXIT,     "^%ENDEXIT\\b" );
+    parser.define_matcher( TC_LOCKEDBY,    "^%LOCKEDBY\\s+(\\w+)" );
 
     parse_toplevel( parser );
 

@@ -3,8 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <boost/unordered_set.hpp>
 
 #include "interface.hh"
+#include "exit.hh"
 
 namespace ta {
 
@@ -17,7 +19,10 @@ namespace ta {
     World *m_world;
     Room  *m_room;
 
-    std::vector<std::string> m_holding;
+    boost::unordered_set<std::string> m_knapsack;
+
+    void try_go( Interface&, Exit&, const std::string & );
+    void try_unlock( Interface&, Exit&, const std::string& );
 
   public:
     
@@ -26,10 +31,11 @@ namespace ta {
     void start_in( Room* );
     Room *current_room();
 
+    void where( Interface& );
     void describe(Interface&);
     void go( const std::vector<std::string>&, Interface&);
     void show_holding( Interface& );
-    void use_item( const std::vector<std::string>&, Interface&);
+    void unlock( const std::vector<std::string>&, Interface&);
 
     void pickup( const std::vector<std::string>&, Interface&);
     void putdown( const std::vector<std::string>&, Interface&);

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/unordered_set.hpp>
 
 #include "interface.hh"
 #include "description.hh"
@@ -18,7 +19,8 @@ namespace ta {
 
       std::string m_name;
       std::vector<std::string> m_description;
-      std::vector<std::string> m_items;
+      
+      boost::unordered_set<std::string> m_items;
 
       Exit m_exit_north;
       Exit m_exit_south;
@@ -38,9 +40,7 @@ namespace ta {
       Exit & exit_east();
       Exit & exit_west();
 
-      void place_item(   const std::string& );
-      bool has_item(     const std::string& );
-      void discard_item( const std::string& );
+      boost::unordered_set<std::string>& items();
   };
 
 }; // namespace ta

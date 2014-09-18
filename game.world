@@ -69,4 +69,36 @@
     %ENDDESCRIBE
   %ENDEXIT
 
+  %EXIT west
+    
+    %GOTO library
+
+    %LOCKEDBY key
+
+    %DESCRIBE
+      This door is closed
+    %ENDDESCRIBE
+  %ENDEXIT
+
 %ENDROOM
+
+%ROOM library
+  
+  %DESCRIBE
+    Cozy, warm. An untended fire burns quietly in the fireplace.
+    Lots of books.
+  %ENDDESCRIBE
+
+  %EXIT east
+    
+    %GOTO hall
+
+    %DESCRIBE
+      A hall
+    %ENDDESCRIBE
+  %ENDEXIT
+
+
+%ENDROOM
+
+

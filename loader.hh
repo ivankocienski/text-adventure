@@ -88,6 +88,7 @@ namespace ta {
 
       decleration_t room_goto;
       decleration_t description; 
+      decleration_t locked_by;
     } exit_t;
 
     typedef struct room_s {
@@ -132,7 +133,8 @@ namespace ta {
       TC_ENDINTRO,
       TC_PAUSE,
       TC_ENDEXIT,
-      TC_GOTO 
+      TC_GOTO,
+      TC_LOCKEDBY
     };
 
     void moan( const Parser&, const std::string& );

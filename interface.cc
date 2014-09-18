@@ -49,6 +49,8 @@ namespace ta {
 
     SDL::Event event;
 
+    m_hold_count = 2;
+
     m_get_events = true;
     m_repaint = true;
 
@@ -67,7 +69,7 @@ namespace ta {
         switch (event.type()) {
 
           case SDL_KEYUP: 
-            if( event.key_sym() == SDLK_SPACE ) m_get_events = false;
+            if( !m_hold_count && event.key_sym() == SDLK_SPACE ) m_get_events = false;
             break;
 
           case SDL_QUIT:
@@ -90,6 +92,8 @@ namespace ta {
       }
 
       SDL_Delay(50);
+
+      if( m_hold_count ) m_hold_count--;
     }
   }
 
@@ -171,6 +175,8 @@ namespace ta {
   void Interface::draw_prompt() {
 
     m_fonts[7].draw_box( 0, 57, 79, 2 );
+
+    if( m_hold_count ) return;
 
     m_fonts[2].puts( 1, 58, "Press SPACEBAR to continue" );
 
