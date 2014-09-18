@@ -38,11 +38,11 @@ namespace ta {
     }
 
     if( exit.islocked() ) {
-      i.puts( 1, "This door is locked" );
+      i.puts( 1, "This door is locked, you need " + exit.locked_with() + " to unlock" );
       return;
     }
 
-    m_room = m_room->exit_north().target();
+    m_room = exit.target();
     where(i); 
   }
 

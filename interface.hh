@@ -66,8 +66,6 @@ namespace ta {
 
       std::list<struct history_s> m_history;
 
-      void draw_box( int, int, int, int );
-
     public:
 
       enum {

@@ -322,8 +322,10 @@ namespace ta {
     if( from.description.assigned )
       upload_description( exit.description(), from.description );
 
-    if( from.locked_by.assigned ) 
+    if( from.locked_by.assigned ) {
+      cout << "door is locked" << endl;
       exit.set_lock( from.locked_by.value() );
+    }
 
     if( from.room_goto.assigned ) {
 

@@ -13,6 +13,7 @@ namespace ta {
   
   Exit::Exit() {
     m_target = NULL;
+    m_locked = false;
   }
 
   bool Exit::isset() {
@@ -21,6 +22,10 @@ namespace ta {
 
   bool Exit::islocked() {
     return m_locked;
+  }
+
+  string & Exit::locked_with() {
+    return m_unlock_with;
   }
 
   Description& Exit::description() {

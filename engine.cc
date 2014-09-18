@@ -79,7 +79,6 @@ namespace ta {
 
     if(words[0] == "go") {
       m_player.go( words, m_interface );
-      m_player.describe( m_interface );
       return;
     }
 

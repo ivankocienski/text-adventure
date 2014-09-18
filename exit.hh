@@ -36,6 +36,7 @@ namespace ta {
       void set_lock( std::string& );
       bool islocked();
       lock_response unlock( boost::unordered_set<std::string>& );
+      std::string& locked_with();
 
       Description &description();
       void describe( Interface& );

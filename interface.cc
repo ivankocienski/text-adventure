@@ -49,10 +49,12 @@ namespace ta {
 
     SDL::Event event;
 
-    m_hold_count = 2;
+    m_hold_count   = 2;
 
-    m_get_events = true;
-    m_repaint = true;
+    m_get_events   = true;
+    m_cursor_show  = true;
+    m_cursor_count = 20;
+    m_repaint      = true;
 
     while(m_get_events) {
 
@@ -178,10 +180,8 @@ namespace ta {
 
     if( m_hold_count ) return;
 
-    m_fonts[2].puts( 1, 58, "Press SPACEBAR to continue" );
-
     if(m_cursor_show)
-      m_screen->fill_rect( 27 * 8, 58 * 8, 8, 8, 2);
+      m_fonts[2].puts( 1, 58, "Press SPACEBAR to continue" );
   }
 
   void Interface::draw_history() {
