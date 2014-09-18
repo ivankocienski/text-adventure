@@ -28,8 +28,11 @@ namespace ta {
     void start_in( Room* );
     Room *current_room();
 
+    void describe_room(Interface&);
+    void describe_exit(Interface&, const std::string&);
+    void describe_item(Interface&, const std::string&);
+
     void where( Interface& );
-    void describe(Interface&);
     void go( const std::vector<std::string>&, Interface&);
     void show_holding( Interface& );
     void unlock( const std::vector<std::string>&, Interface&);

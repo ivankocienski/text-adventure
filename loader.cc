@@ -18,6 +18,8 @@ using namespace std;
 
 namespace ta { 
 
+  boost::regex Loader::s_blank_r( "^\\s*$" );
+
   Loader::Loader( World* w, Player* p) : m_world(w), m_player(p) { 
     m_warnings = 0;
   }
@@ -416,8 +418,8 @@ namespace ta {
 
   Loader::Parser::Parser( const std::string &fn ) : 
     m_line_number(0),
-    m_file( fn.c_str() ),
-    m_blank_r( "^\\s*$" ) { }
+    m_file( fn.c_str() )
+    { }
 
   Loader::Parser::token_type Loader::Parser::next_token() {
 
@@ -440,7 +442,7 @@ namespace ta {
       }
 
       // blank line
-      if(boost::regex_match( m_line, m_capture, m_blank_r) ) continue;
+      if(boost::regex_match( m_line, m_capture, Loader::s_blank_r) ) continue;
 
       // comment line
       if(m_line[0] == '#') continue;

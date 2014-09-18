@@ -26,8 +26,28 @@ namespace ta {
     return m_room;
   }
 
-  void Player::describe( Interface &i ) {
+  void Player::describe_room( Interface &i ) {
     m_room->describe(i);
+  }
+
+  void Player::describe_exit( Interface &i, const string &w ) {
+
+    if( m_room->exits().count(w) == 0 ) {
+      i.puts( 1, "Room does not have exit " + w );
+      return;
+    }
+
+    m_room->exits()[w].describe(i); 
+  }
+
+  void Player::describe_item( Interface &i, const string &w ) {
+
+    if( m_room->exits().count(w) == 0 ) {
+      i.puts( 1, "Room does not have exit " + w );
+      return;
+    }
+
+    m_room->exits()[w].describe(i); 
   }
 
   void Player::go( const std::vector<std::string>& words, Interface &i ) {

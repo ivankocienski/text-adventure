@@ -18,6 +18,8 @@ namespace ta {
   class Loader {
   private:
 
+    static boost::regex s_blank_r;
+
     class Parser {
       public:
 
@@ -38,7 +40,6 @@ namespace ta {
         int m_token_code;
 
         std::ifstream        m_file;
-        boost::regex         m_blank_r;
         std::string          m_line;
         std::list<matcher_t> m_matchers;
         boost::smatch        m_capture;

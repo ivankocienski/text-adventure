@@ -73,8 +73,35 @@ namespace ta {
     }
 
     if(words[0] == "describe") {
-      m_player.describe( m_interface );
-      return;
+
+      if( words.size() == 1 || words[1] == "room" ) {
+        m_player.describe_room( m_interface ); 
+        return;
+      }
+
+/*       if( words[1] == "item" ) {
+ *         if( words.size() != 3 ) {
+ *           m_interface.puts( 1, "Which item should I describe to you?" );
+ *           return;
+ *         }
+ * 
+ *         m_player.describe_item( m_interface, words[2] );
+ *         return;
+ *       }
+ */
+
+      if( words[1] == "exit" ) {
+        if( words.size() != 3 ) {
+          m_interface.puts( 1, "Which exit should I describe to you?" );
+          return;
+        }
+
+        m_player.describe_exit( m_interface, words[2] );
+        return;
+      }
+
+      m_interface.puts( 1, "I do not know how to describe " + words[1] );
+      return; 
     }
 
     if(words[0] == "go") {

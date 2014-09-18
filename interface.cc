@@ -3,6 +3,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <list>
+#include <vector>
+
+#include <boost/shared_ptr.hpp>
 
 #include "sdl/event.hh"
 #include "sdl/screen.hh"
@@ -229,7 +233,28 @@ namespace ta {
         break;
 
       case SDLK_RETURN:
-        m_get_events = false;
+        {
+          bool is_blank = true;
+          list<char>::iterator it;
+
+          for( it = m_buffer.begin(); it != m_buffer.end(); it++ ) {
+            if( isspace( *it ) ) continue;
+
+            is_blank = false;
+            break;
+          }
+
+          if( is_blank ) {
+            m_buffer.clear();
+            m_buffer_pos   = m_buffer.begin();
+            m_cursor_count = 20;
+            m_cursor_show  = m_cursor_show;
+            m_repaint      = true; 
+
+          } else 
+            m_get_events = false;
+
+        }
         break;
 
       case SDLK_BACKSPACE:
