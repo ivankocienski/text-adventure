@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "room.hh"
+#include "item.hh"
 
 namespace ta {
   
@@ -14,7 +15,10 @@ namespace ta {
 
     typedef std::map<std::string, Room> room_map_t;
 
-    room_map_t m_rooms;
+    typedef std::map<std::string, item_ptr> item_ptr_map_t;
+
+    room_map_t     m_rooms;
+    item_ptr_map_t m_items;
 
     std::string m_name;
     std::string m_author;
@@ -36,6 +40,9 @@ namespace ta {
     void introduce(Interface&);
 
     Description& description();
+
+    item_ptr create_item( const std::string & );
+    item_ptr & get_item( const std::string & );
   };
 
 }; // namespace ta

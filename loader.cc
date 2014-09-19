@@ -11,6 +11,7 @@
 #include "player.hh"
 #include "description.hh"
 #include "exit.hh"
+#include "item.hh"
 
 /* i hope this does not turn into a shitty lisp implementation... */
 
@@ -92,6 +93,52 @@ namespace ta {
     }
   }
 
+  void Loader::parse_item( item_t &item, string &r, Parser &parser ) {
+
+    if( item.assigned ) {
+      moan( parser, "Item already exists in world, see line " + item.line );
+      return;
+    }
+
+    item.assigned = true;
+    item.line     = parser.line_number();
+    item.in_room  = r;
+
+    set_decleration( item.name, parser );
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in ITEM" );
+          return;
+
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string in ITEM" );
+          break; 
+
+        case Parser::TT_TOKEN:
+          switch( parser.token_code() ) {
+
+            case TC_ENDITEM:
+              return;
+
+            case TC_DESCRIBE:
+              parse_describe( item.description, parser );
+              break;
+
+            default:
+              moan( parser, "bad token at ITEM" );
+              break;
+          }
+
+          break;
+      }
+    }
+
+
+  }
+
   void Loader::parse_exit( exit_t &exit, Parser &parser ) {
 
     if( exit.assigned ) {
@@ -145,6 +192,7 @@ namespace ta {
 
     room_t &room = m_rooms[ parser.first_match() ];
 
+
     set_decleration( room.name, parser );
 
     while( true ) {
@@ -172,7 +220,11 @@ namespace ta {
               break;
               
             case TC_ITEM:
-              set_decleration( room.items[ parser.first_match() ], parser ); 
+              parse_item( 
+                m_items[ parser.first_match() ], 
+                room.name.value(),
+                parser 
+              );
               break;
 
             case TC_DESCRIBE:
@@ -328,7 +380,23 @@ namespace ta {
     return true; 
   }
 
-  void Loader::upload() {
+  void Loader::upload_items() {
+
+    for( item_map_t::iterator ri = m_items.begin(); ri != m_items.end(); ri++ ) {
+
+      item_t &id = (*ri).second;
+
+      item_ptr ip = m_world->create_item( (const string)id.name.value() );
+      upload_description( ip->description(), id.description );
+
+      // this should never fail.
+      Room *r = m_world->get( id.in_room );
+
+      r->place_item( ip ); 
+    }
+  }
+  
+  void Loader::upload_globals() {
 
     m_world->set_name(      m_globals.name.parts.front() );
     m_world->set_author(    m_globals.author.parts.front() );
@@ -336,6 +404,13 @@ namespace ta {
 
     if(m_globals.introduction.assigned) 
       upload_description( m_world->description(), m_globals.introduction );
+
+    Room *r = m_world->get( m_globals.start.value() );
+
+    m_player->start_in(r); 
+  }
+
+  void Loader::upload_rooms() {
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
 
@@ -353,12 +428,6 @@ namespace ta {
 
       Room *r = m_world->get( rd.name.value() );
 
-      for( decleration_map_t::iterator it = rd.items.begin(); it != rd.items.end(); it++ ) {
-
-        decleration_t &id = (*it).second;
-        r->items().insert( id.value() );
-      }
-
       for( map<string, exit_t>::iterator it = rd.exits.begin(); it != rd.exits.end(); it++ ) {
 
         string name = (*it).first;
@@ -370,10 +439,6 @@ namespace ta {
       if( rd.exits.size() == 0 )
         moan( rd.name, "no exits defined in room" );
     }
-
-    Room *r = m_world->get( m_globals.start.value() );
-
-    m_player->start_in(r); 
   }
 
   void Loader::parse( const string &fn ) {
@@ -391,6 +456,7 @@ namespace ta {
     parser.define_matcher( TC_ENDDESCRIBE, "^%ENDDESCRIBE\\b" );
     parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
     parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDITEM,     "^%ENDITEM\\b" );
     parser.define_matcher( TC_VERSION,     "^%VERSION\\s+(\\w+)" );
     parser.define_matcher( TC_INTRO,       "^%INTRO\\b" );
     parser.define_matcher( TC_ENDINTRO,    "^%ENDINTRO\\b" );
@@ -406,7 +472,9 @@ namespace ta {
       exit(-1);
     }
 
-    upload();
+    upload_rooms();
+    upload_items();
+    upload_globals();
   }
 
 

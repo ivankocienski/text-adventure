@@ -92,25 +92,36 @@ namespace ta {
       decleration_t locked_by;
     } exit_t;
 
+    typedef struct item_s {
+
+      bool assigned;
+      size_t line;
+
+      item_s() : assigned( false ), line(0) {}
+
+      decleration_t name;
+      decleration_t description;
+
+      // cannot be blank
+      std::string in_room; 
+    } item_t;
+
+    typedef std::map<std::string, item_t> item_map_t;
+
     typedef struct room_s {
 
       decleration_t name; 
       decleration_t description; 
 
       std::map<std::string, exit_t> exits;
-/*       exit_t exit_north;
- *       exit_t exit_south;
- *       exit_t exit_east;
- *       exit_t exit_west; 
- */
 
-      decleration_map_t items;
     } room_t, *p_room_t;
 
     typedef std::map<std::string, room_t> room_map_t;
 
     global_t   m_globals;
     room_map_t m_rooms;
+    item_map_t m_items;
     
     /* Engine owns World and Player, we're just borrowing them
        here, so its okay. i hope. */
@@ -131,6 +142,7 @@ namespace ta {
       TC_ENDDESCRIBE,
       TC_EXIT,
       TC_ITEM,
+      TC_ENDITEM,
       TC_VERSION,
       TC_INTRO,
       TC_ENDINTRO,
@@ -148,13 +160,16 @@ namespace ta {
     void parse_describe( decleration_t&, Parser& );
 
     void parse_exit( exit_t&, Parser& );
+    void parse_item( item_t&, std::string&, Parser& );
     void parse_room( Parser& );
     void parse_intro( Parser& );
     void parse_toplevel( Parser& );
 
     void upload_description( Description&, decleration_t& );
     bool upload_exit( Exit&, exit_t& );
-    void upload();
+    void upload_items();
+    void upload_rooms();
+    void upload_globals();
 
   public:
     Loader( World*, Player* );

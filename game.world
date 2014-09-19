@@ -47,6 +47,12 @@
   %ENDEXIT
 
   %ITEM key
+    
+    %DESCRIBE
+      So shiny
+    %ENDDESCRIBE
+
+  %ENDITEM
 
 %ENDROOM
 

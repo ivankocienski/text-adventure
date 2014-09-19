@@ -2,13 +2,14 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <boost/unordered_set.hpp>
+#include <map>
 
 #include "interface.hh"
 #include "player.hh"
 #include "world.hh"
 #include "room.hh"
 #include "exit.hh"
+#include "item.hh"
 
 using namespace std;
 
@@ -40,14 +41,15 @@ namespace ta {
     m_room->exits()[w].describe(i); 
   }
 
+  //can only describe items in room :(
   void Player::describe_item( Interface &i, const string &w ) {
 
-    if( m_room->exits().count(w) == 0 ) {
+    if( !m_room->has_item( w ) ) {
       i.puts( 1, "Room does not have exit " + w );
       return;
     }
 
-    m_room->exits()[w].describe(i); 
+    m_world->get_item( w )->describe(i);
   }
 
   void Player::go( const std::vector<std::string>& words, Interface &i ) {
@@ -82,11 +84,11 @@ namespace ta {
       return;
     }
 
-    boost::unordered_set<string>::iterator it;
+    map<string, item_ptr>::iterator it;
 
     i.puts( "You are holding" );
     for( it = m_knapsack.begin(); it != m_knapsack.end(); it++ ) {
-      i.puts( "  " + *it ); 
+      i.puts( "  " + (*it).first ); 
     }
   }
 
@@ -104,13 +106,15 @@ namespace ta {
       return;
     }
 
-    if( !m_room->items().count( what ) ) {
+    if( !m_room->has_item( what ) ) {
       i.puts( 1, "Could not find '" + what + "' to pick up" );
       return;
     }
 
-    m_room->items().erase( what ); 
-    m_knapsack.insert( what );
+    m_room->remove_item( what ); 
+
+    item_ptr ip = m_world->get_item( what );
+    m_knapsack[what] = ip;
 
     i.puts( 7, "You have picked up " + what );
   }
@@ -129,13 +133,15 @@ namespace ta {
       return;
     }
 
-    if( m_room->items().count( what ) ) {
+    if( m_room->has_item( what ) ) {
       i.puts( 1, "There is already a " + what + " in this room" );
       return;
     }
 
     m_knapsack.erase( what );
-    m_room->items().insert( what );
+
+    item_ptr ip = m_world->get_item( what );
+    m_room->place_item( ip );
 
     i.puts( 7, "You have put down " + what );
 

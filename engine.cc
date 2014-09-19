@@ -79,16 +79,16 @@ namespace ta {
         return;
       }
 
-/*       if( words[1] == "item" ) {
- *         if( words.size() != 3 ) {
- *           m_interface.puts( 1, "Which item should I describe to you?" );
- *           return;
- *         }
- * 
- *         m_player.describe_item( m_interface, words[2] );
- *         return;
- *       }
- */
+      if( words[1] == "item" ) {
+        if( words.size() != 3 ) {
+          m_interface.puts( 1, "Which item should I describe to you?" );
+          return;
+        }
+
+        m_player.describe_item( m_interface, words[2] );
+        return;
+      }
+
 
       if( words[1] == "exit" ) {
         if( words.size() != 3 ) {

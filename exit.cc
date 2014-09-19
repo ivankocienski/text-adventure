@@ -1,11 +1,12 @@
 
 #include <string>
-#include <boost/unordered_set.hpp>
+#include <map>
 
 #include "description.hh"
 #include "interface.hh"
 #include "room.hh"
 #include "exit.hh"
+#include "item.hh"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ namespace ta {
     m_unlock_with = l;
   }
 
-  Exit::lock_response Exit::unlock( boost::unordered_set<string> &ks ) {
+  Exit::lock_response Exit::unlock( map<string, item_ptr> &ks ) {
 
     if( m_unlock_with == "" )
       return LR_NOLOCK;

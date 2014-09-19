@@ -2,10 +2,11 @@
 #pragma once
 
 #include <string>
-#include <boost/unordered_set.hpp>
+#include <map>
 
 #include "description.hh"
 #include "interface.hh"
+#include "item.hh"
 
 namespace ta {
   
@@ -34,7 +35,7 @@ namespace ta {
 
       void set_lock( std::string& );
       bool islocked();
-      lock_response unlock( boost::unordered_set<std::string>& );
+      lock_response unlock( std::map<std::string, item_ptr>& );
       std::string& locked_with();
 
       Description &description();

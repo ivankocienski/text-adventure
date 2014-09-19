@@ -3,11 +3,11 @@
 
 #include <string>
 #include <vector>
-#include <boost/unordered_set.hpp>
 
 #include "interface.hh"
 #include "description.hh"
 #include "exit.hh"
+#include "item.hh"
 
 namespace ta { 
 
@@ -17,10 +17,11 @@ namespace ta {
 
       //Description m_description;
 
+      
       std::string m_name;
       std::vector<std::string> m_description;
       
-      boost::unordered_set<std::string> m_items;
+      std::map<std::string, item_ptr> m_items;
 
       std::map<std::string, Exit> m_exits;
 
@@ -34,7 +35,9 @@ namespace ta {
       
       std::map<std::string, Exit> & exits();
 
-      boost::unordered_set<std::string>& items();
+      void place_item( item_ptr& );
+      bool has_item( const std::string& );
+      void remove_item( const std::string & );
   };
 
 }; // namespace ta
