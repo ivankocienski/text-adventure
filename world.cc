@@ -73,14 +73,11 @@ namespace ta {
     return m_description;
   }
 
-  //TODO: what if the item already exists?
-  item_ptr World::create_item( const string &n ) {
-    item_ptr i( new Item(n));
-    m_items[n] = i;
-    return i;
+  Item & World::create_item( const string &n ) {
+    return m_items[n] = Item( n );
   }
 
-  item_ptr & World::get_item( const string &n ) {
+  Item & World::get_item( const string &n ) {
     return m_items[n];
   }
 

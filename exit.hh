@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <boost/unordered_set.hpp>
 
 #include "description.hh"
 #include "interface.hh"
@@ -35,7 +36,7 @@ namespace ta {
 
       void set_lock( std::string& );
       bool islocked();
-      lock_response unlock( std::map<std::string, item_ptr>& );
+      lock_response unlock( boost::unordered_set<std::string>& );
       std::string& locked_with();
 
       Description &description();

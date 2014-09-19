@@ -2,12 +2,14 @@
 #pragma once
 
 #include <string>
-#include <boost/shared_ptr.hpp>
 
 #include "description.hh"
 #include "interface.hh"
 
+
 namespace ta {
+
+  class Room;
   
   class Item {
   private:
@@ -15,20 +17,20 @@ namespace ta {
     std::string m_name;
     Description m_description;
 
+    Room  *m_in_room;
+    
   public:
 
     Item(); 
     Item(const std::string&);
 
     Description& description();
-
     std::string & name();
-    void set_name( const std::string& );
-
     void describe( Interface& );
+
+    void set_room( Room* );
   };
 
-  typedef boost::shared_ptr<Item> item_ptr;
 
 }; // namepspace ta;
 

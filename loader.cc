@@ -386,13 +386,13 @@ namespace ta {
 
       item_t &id = (*ri).second;
 
-      item_ptr ip = m_world->create_item( (const string)id.name.value() );
-      upload_description( ip->description(), id.description );
+      Item & item = m_world->create_item( (const string)id.name.value() );
+      upload_description( item.description(), id.description );
 
       // this should never fail.
       Room *r = m_world->get( id.in_room );
 
-      r->place_item( ip ); 
+      item.set_room( r );
     }
   }
   

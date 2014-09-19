@@ -44,12 +44,12 @@ namespace ta {
   //can only describe items in room :(
   void Player::describe_item( Interface &i, const string &w ) {
 
-    if( !m_room->has_item( w ) ) {
+    if( !m_room->is_item_in_inventory( w ) ) {
       i.puts( 1, "Room does not have exit " + w );
       return;
     }
 
-    m_world->get_item( w )->describe(i);
+    m_world->get_item( w ).describe(i);
   }
 
   void Player::go( const std::vector<std::string>& words, Interface &i ) {
@@ -84,11 +84,11 @@ namespace ta {
       return;
     }
 
-    map<string, item_ptr>::iterator it;
+    boost::unordered_set<string>::iterator it;
 
     i.puts( "You are holding" );
     for( it = m_knapsack.begin(); it != m_knapsack.end(); it++ ) {
-      i.puts( "  " + (*it).first ); 
+      i.puts( "  " + *it ); 
     }
   }
 
@@ -106,15 +106,13 @@ namespace ta {
       return;
     }
 
-    if( !m_room->has_item( what ) ) {
+    if( !m_room->is_item_in_inventory( what ) ) {
       i.puts( 1, "Could not find '" + what + "' to pick up" );
       return;
     }
 
-    m_room->remove_item( what ); 
-
-    item_ptr ip = m_world->get_item( what );
-    m_knapsack[what] = ip;
+    m_world->get_item(what).set_room( NULL );
+    m_knapsack.insert( what );
 
     i.puts( 7, "You have picked up " + what );
   }
@@ -133,15 +131,13 @@ namespace ta {
       return;
     }
 
-    if( m_room->has_item( what ) ) {
+    if( m_room->is_item_in_inventory( what ) ) {
       i.puts( 1, "There is already a " + what + " in this room" );
       return;
     }
 
+    m_world->get_item(what).set_room( m_room );
     m_knapsack.erase( what );
-
-    item_ptr ip = m_world->get_item( what );
-    m_room->place_item( ip );
 
     i.puts( 7, "You have put down " + what );
 

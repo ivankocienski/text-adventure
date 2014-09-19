@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <boost/unordered_set.hpp>
 
 using namespace std;
 
@@ -43,13 +44,13 @@ namespace ta {
       }
     }
 
-    if( m_items.size() ) {
+    if( m_inventory.size() ) {
 
-      map<string, item_ptr>::iterator it;
+      boost::unordered_set<string>::iterator it;
 
       i.puts( "You can see" );
-      for(it = m_items.begin(); it != m_items.end(); it++ ) {
-        string name = (*it).first;
+      for(it = m_inventory.begin(); it != m_inventory.end(); it++ ) {
+        string name = *it;
 
         i.puts( "  " + name );
       }
@@ -57,16 +58,16 @@ namespace ta {
     
   }
 
-  void Room::place_item( item_ptr& i ) {
-    m_items[i->name()] = i;
+  void Room::add_item_to_inventory( const string &s ) {
+    m_inventory.insert(s);
   }
 
-  bool Room::has_item( const string &n ) {
-    return m_items.count(n) > 0;
+  bool Room::is_item_in_inventory( const string &w ) {
+    return m_inventory.count(w) == 1; 
   }
 
-  void Room::remove_item( const string &n ) {
-    m_items.erase( n );
+  void Room::remove_item_from_inventory( const string &w ) {
+    m_inventory.erase(w); 
   }
 
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <boost/unordered_set.hpp>
 
 #include "interface.hh"
 #include "exit.hh"
@@ -20,7 +21,7 @@ namespace ta {
     World *m_world;
     Room  *m_room;
 
-    std::map<std::string, item_ptr> m_knapsack;
+    boost::unordered_set<std::string> m_knapsack;
 
   public:
     
