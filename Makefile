@@ -2,7 +2,7 @@
 CC=g++
 CFLAGS=-Wall -g # -std=c++11
 LFLAGS=-g
-LIBS=-lboost_regex -lSDL -lSDL_image
+LIBS=-lboost_regex -lboost_system -lboost_filesystem -lSDL -lSDL_image
 
 EXE=adventure
 SOURCES= \
@@ -17,6 +17,7 @@ SOURCES= \
 	description.cc \
 	exit.cc \
 	application.cc \
+	save_menu.cc \
 	sdl/screen.cc \
 	sdl/event.cc \
 	sdl/surface.cc

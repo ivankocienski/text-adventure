@@ -24,7 +24,7 @@ namespace ta {
       LM_CONFIRM_LOAD, // if game active
       LM_CONFIRM_QUIT, // always
 
-      LM_STOP
+      LM_HALT
     };
 
     Interface  &m_interface;

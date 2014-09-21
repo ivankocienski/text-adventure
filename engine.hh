@@ -10,6 +10,17 @@
 
 namespace ta {
 
+  /* EngineState is actually responsible for dumping / loading engine state to
+     a file */
+  class EngineState {
+  private:
+
+  public:
+
+    EngineState();
+
+  };
+
   class Engine {
     private:
 

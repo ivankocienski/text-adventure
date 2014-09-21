@@ -6,6 +6,8 @@
 #include "application.hh"
 #include "interface.hh"
 
+#include "save_menu.hh"
+
 using namespace std;
 
 namespace ta {
@@ -22,6 +24,8 @@ namespace ta {
     m_interface.puts( 1, "" );
     m_interface.puts( 1, "" );
 
+    m_interface.press_any_key();
+
     m_loop_mode = LM_MAIN_MENU;
   }
 
@@ -30,10 +34,11 @@ namespace ta {
     boost::regex number_r( "^\\s*(\\d+)\\s*$" );
     boost::smatch matches;
 
-    while(true) {
+    while( m_loop_mode == LM_MAIN_MENU ) {
 
       int c = m_game_active ? 7 : 6;
 
+      m_interface.puts( 1, "" );
       m_interface.puts( 7, "]=== Main Menu ===[" );
       m_interface.puts( 7, "  1. new game" );
       m_interface.puts( c, "  2. resume game" );
@@ -58,6 +63,8 @@ namespace ta {
         m_interface.puts( 1, "Was not a number" ); 
       }
 
+      cout << "option=" << option << endl;
+
       switch( option ) {
 
       // new
@@ -78,7 +85,7 @@ namespace ta {
         if( m_game_active ) 
           m_loop_mode = LM_CONFIRM_LOAD;
         else
-          m_loop_mode = LM_SHOW_HELP; 
+          m_loop_mode = LM_LOAD_MENU; 
         break; 
 
       // save
@@ -106,6 +113,8 @@ namespace ta {
   void Application::play_game() {
 
     m_engine.run(); 
+
+    m_game_active = m_engine.is_running();
   }
 
   void Application::show_help() {
@@ -117,26 +126,83 @@ namespace ta {
     }
 
     m_help.show( m_interface );
+
+    m_loop_mode = LM_MAIN_MENU;
   }
 
   void Application::load_game() {
 
+    SaveMenu sm( m_interface, m_engine );
+
+    sm.show_load();
   }
 
   void Application::save_game() {
 
+    SaveMenu sm( m_interface, m_engine );
+
+    sm.show_save();
   }
 
   void Application::confirm_quit() {
 
+    while(true) {
+
+      m_interface.puts( 7, "Quit? Are you sure (yes or no)?" );
+
+      string input = m_interface.wait_for_input();
+
+      if( input == "yes" ) {
+        m_loop_mode = LM_HALT;
+        return;
+      }
+
+      if( input == "no" ) {
+        m_loop_mode = LM_MAIN_MENU;
+        return;
+      }
+    } 
   }
 
   void Application::confirm_new() {
 
+    while(true) {
+
+      m_interface.puts( 7, "Game is running, start new anyway (yes or no)?" );
+
+      string input = m_interface.wait_for_input();
+
+      if( input == "yes" ) {
+        m_engine.reset();
+        m_loop_mode = LM_PLAY_GAME;
+        return;
+      }
+
+      if( input == "no" ) {
+        m_loop_mode = LM_MAIN_MENU;
+        return;
+      }
+    } 
   }
 
   void Application::confirm_load() {
 
+    while(true) {
+
+      m_interface.puts( 7, "Game is running, load game anyway (yes or no)?" );
+
+      string input = m_interface.wait_for_input();
+
+      if( input == "yes" ) {
+        m_loop_mode = LM_LOAD_MENU;
+        return;
+      }
+
+      if( input == "no" ) {
+        m_loop_mode = LM_MAIN_MENU;
+        return;
+      }
+    } 
   }
 
   int Application::main() {
@@ -144,7 +210,8 @@ namespace ta {
     while( true ) {
 
       switch( m_loop_mode ) {
-        case LM_STOP:      return 0;
+        case LM_HALT:  
+          return 0;
 
         case LM_SPLASH:    show_splash(); break;
         case LM_MAIN_MENU: main_menu();   break;

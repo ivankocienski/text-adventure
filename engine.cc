@@ -118,6 +118,10 @@ namespace ta {
       m_interface.puts( "" );
     }
 
+
   }
 
+  bool Engine::is_running() {
+    return m_game_running;
+  }
 }; // namespace ta
