@@ -1,6 +1,6 @@
 
 #include "interface.hh"
-#include "engine.hh"
+#include "application.hh"
 
 using namespace std;
 
@@ -9,9 +9,8 @@ int main( int argc, char ** argv ) {
   ta::Interface interface;
   interface.init( 640, 480 );
 
-  ta::Engine engine(interface);
-  engine.run();
+  ta::Application app( interface );
 
-  return 0;
+  return app.main();
 }
 

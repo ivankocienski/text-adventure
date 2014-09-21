@@ -16,6 +16,7 @@ SOURCES= \
 	item.cc \
 	description.cc \
 	exit.cc \
+	application.cc \
 	sdl/screen.cc \
 	sdl/event.cc \
 	sdl/surface.cc

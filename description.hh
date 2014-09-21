@@ -26,7 +26,8 @@ namespace ta {
   public:
     Description();
 
-    void push_string( std::string& );
+    bool empty();
+    void push_string( const std::string& );
     void push_pause();
 
     void show( Interface& );

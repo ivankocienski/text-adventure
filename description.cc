@@ -13,7 +13,11 @@ namespace ta {
   Description::Description() { 
   }
 
-  void Description::push_string( string& s ) {
+  bool Description::empty() {
+    return m_lines.size() == 0;
+  }
+
+  void Description::push_string( const string& s ) {
 
     struct description_line_s d = {
       s,

@@ -348,7 +348,7 @@ namespace ta {
         continue;
       }
 
-      d.push_string( *it );
+      d.push_string( (const string &)*it );
     } 
   }
 

@@ -16,36 +16,16 @@ using namespace std;
 namespace ta {
 
   Engine::Engine(Interface &i) : m_interface(i), m_player( &m_world ) {
+    reset();
+  }
 
+  void Engine::reset() {
     Loader loader( &m_world, &m_player );
-
     loader.parse( "game.world" );
+    //TODO: reset player, world
   }
-
-  void Engine::announce() {
-
-    m_interface.puts( "ADVENTURE (v0)" );
-
-    m_world.introduce(m_interface);
-    m_interface.puts("");
-  }
-
-  void Engine::show_help() {
-
-    cout 
-      << "commands help:" << endl
-      << "  quit - exit" << endl
-      //<< "  list - list current rooms in world" << endl
-      << "  describe - where you are" << endl
-      << endl;
-  } 
 
   void Engine::handle_input( const vector<string> &words ) {
-
-    if(words[0] == "help") {
-      show_help();
-      return;
-    }
 
     if(words[0] == "holding" ) {
       m_player.show_holding(m_interface);
@@ -66,11 +46,6 @@ namespace ta {
       m_player.unlock( words, m_interface );
       return;
     } 
-
-    if(words[0] == "intro") {
-      m_world.introduce( m_interface );
-      return;
-    }
 
     if(words[0] == "describe") {
 
@@ -109,13 +84,12 @@ namespace ta {
       return;
     }
 
-    if(words[0] == "quit") {
-      //...
-      exit(0);
+    if(words[0] == "menu") {
+      m_game_running = false;
+      return;
     }
 
     m_interface.puts( 1, "Did not understand you" );
-
   }
 
   void Engine::run() {
@@ -123,10 +97,11 @@ namespace ta {
     boost::regex space_r( "\\s+" );
     vector<string> words;
 
-    announce();
     m_player.where( m_interface );
 
-    while(true) {
+    m_game_running = true;
+
+    while(m_game_running) {
 
       string input = m_interface.wait_for_input();
 
@@ -144,4 +119,5 @@ namespace ta {
     }
 
   }
-}
+
+}; // namespace ta

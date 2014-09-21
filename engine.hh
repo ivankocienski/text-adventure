@@ -13,19 +13,26 @@ namespace ta {
   class Engine {
     private:
 
-      Interface &m_interface;
-      Player     m_player;
-      World      m_world;
+      Interface  &m_interface;
+      Player      m_player;
+      World       m_world;
 
-      void show_help(); 
-      void announce(); 
+      bool        m_game_running;
+
       void handle_input( const std::vector<std::string>& );
 
     public:
 
       Engine(Interface&);
 
+      // reset game to start
+      void reset();
+
+      // the main game loop
       void run();
+
+      // has the game ended, did the player win/die?
+      bool is_running();
   };
 
 }; // namespace ta;
