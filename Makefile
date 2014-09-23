@@ -2,7 +2,7 @@
 CC=g++
 CFLAGS=-Wall -g # -std=c++11
 LFLAGS=-g
-LIBS=-lboost_regex -lboost_system -lboost_filesystem -lSDL -lSDL_image
+LIBS=-lboost_regex -lboost_system -lboost_filesystem -lSDL -lSDL_image -lboost_date_time
 
 EXE=adventure
 SOURCES= \

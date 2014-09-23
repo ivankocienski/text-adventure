@@ -29,7 +29,7 @@ namespace ta {
 
     void build_room( const std::string&, const std::vector<std::string>& );
     void list_rooms();
-    Room* get(const std::string&);
+    Room* get_room(const std::string&);
 
     void set_name(      const std::string &);
     void set_author(    const std::string &);
@@ -39,6 +39,7 @@ namespace ta {
 
     Description& description();
 
+    bool has_item( const std::string & );
     Item & create_item( const std::string & );
     Item & get_item( const std::string & );
   };

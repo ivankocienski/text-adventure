@@ -368,7 +368,7 @@ namespace ta {
 
       string name = from.room_goto.value();
 
-      Room *other = m_world->get( name );
+      Room *other = m_world->get_room( name );
       if( !other ) {
         moan( from.room_goto, "could not lookup ROOM " + name + " in GOTO" );
         return false;
@@ -390,7 +390,7 @@ namespace ta {
       upload_description( item.description(), id.description );
 
       // this should never fail.
-      Room *r = m_world->get( id.in_room );
+      Room *r = m_world->get_room( id.in_room );
 
       item.set_room( r );
     }
@@ -405,7 +405,7 @@ namespace ta {
     if(m_globals.introduction.assigned) 
       upload_description( m_world->description(), m_globals.introduction );
 
-    Room *r = m_world->get( m_globals.start.value() );
+    Room *r = m_world->get_room( m_globals.start.value() );
 
     m_player->start_in(r); 
   }
@@ -426,7 +426,7 @@ namespace ta {
 
       room_t &rd = (*ri).second;
 
-      Room *r = m_world->get( rd.name.value() );
+      Room *r = m_world->get_room( rd.name.value() );
 
       for( map<string, exit_t>::iterator it = rd.exits.begin(); it != rd.exits.end(); it++ ) {
 

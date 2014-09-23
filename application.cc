@@ -135,6 +135,14 @@ namespace ta {
     SaveMenu sm( m_interface, m_engine );
 
     sm.show_load();
+
+    if( sm.response() == SaveMenu::RC_CANCEL ) {
+      m_loop_mode = LM_MAIN_MENU;
+    }
+
+    if( sm.response() == SaveMenu::RC_PLAY_GAME ) {
+      m_loop_mode = LM_PLAY_GAME;
+    }
   }
 
   void Application::save_game() {

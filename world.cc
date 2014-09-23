@@ -35,7 +35,7 @@ namespace ta {
     } 
   }
 
-  Room* World::get( const string &n ) {
+  Room* World::get_room( const string &n ) {
 
     room_map_t::iterator it = m_rooms.find(n);
 
@@ -79,6 +79,10 @@ namespace ta {
 
   Item & World::get_item( const string &n ) {
     return m_items[n];
+  }
+
+  bool World::has_item( const string &n ) {
+    return m_items.count(n) > 0;
   }
 
 

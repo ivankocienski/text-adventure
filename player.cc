@@ -61,7 +61,7 @@ namespace ta {
 
     string dir = words[1];
 
-    if( m_room->exits().count(dir) == 0 ) {
+    if( !m_room->has_exit(dir) ) {
       i.puts( 1, "I do not know direction " + dir );
       return; 
     }

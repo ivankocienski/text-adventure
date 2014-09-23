@@ -33,6 +33,7 @@ namespace ta {
       std::string name();
       void describe( Interface&);
       
+      bool has_exit( const std::string& );
       std::map<std::string, Exit> & exits();
 
       void add_item_to_inventory( const std::string& );

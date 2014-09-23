@@ -24,6 +24,10 @@ namespace ta {
   map<string, Exit> & Room::exits() {
     return m_exits;
   }
+  
+  bool Room::has_exit( const string &dir ) {
+    return m_exits.count(dir) > 0;
+  }
 
   void Room::describe( Interface &i ) {
 

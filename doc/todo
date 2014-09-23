@@ -1,3 +1,14 @@
 
 TODO :-
 
+- better menu
+- save game
+- load game
+
+- characters (see notes)
+
+- stages
+  - like levels. allows us to have different logic for
+  characters. characters may set up information inter-stage.
+
+
