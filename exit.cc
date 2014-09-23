@@ -22,6 +22,10 @@ namespace ta {
     return m_locked;
   }
 
+  void Exit::unlock() {
+    m_locked = false;
+  }
+
   string & Exit::locked_with() {
     return m_unlock_with;
   }

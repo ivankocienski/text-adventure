@@ -157,8 +157,31 @@ namespace ta {
 
   }
 
-  void EngineState::load_to_engine(Engine&) {
+  void EngineState::load_to_engine( Engine& e ) {
 
+    Room *r = e.world().get_room( m_player_room_in );
+    e.player().start_in( r );
+
+    for( list<string>::iterator it = m_has_items.begin(); it != m_has_items.end(); it++ ) {
+      e.player().give_item( *it );
+    }
+
+    door_open_map_t::iterator it;
+    for( it = m_door_open.begin(); it != m_door_open.end(); it++ ) {
+
+      string       name  = (*it).first;
+      list<string> doors = (*it).second;
+      Room         *room = e.world().get_room(name);
+
+      list<string>::iterator door_it;
+      for( door_it = doors.begin(); door_it != doors.end(); door_it++ ) {
+        Exit &ex = room->exits()[name];
+        ex.unlock();
+
+        Item &item = e.world().get_item(ex.locked_with());
+        item.set_room(NULL);
+      } 
+    } 
   }
 
   // from disk to ram
@@ -314,6 +337,10 @@ namespace ta {
 
   World& Engine::world() {
     return m_world;
+  }
+
+  Player& Engine::player() {
+    return m_player;
   }
 
 }; // namespace ta

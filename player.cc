@@ -143,6 +143,11 @@ namespace ta {
 
   }
 
+  void Player::give_item( const string &what ) {
+    m_world->get_item(what).set_room( NULL );
+    m_knapsack.insert( what );
+  }
+
   void Player::where( Interface &i ) {
     i.puts( 7, "You are standing in " + m_room->name() ); 
   }

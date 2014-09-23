@@ -41,6 +41,7 @@ namespace ta {
 
     void pickup( const std::vector<std::string>&, Interface&);
     void putdown( const std::vector<std::string>&, Interface&);
+    void give_item( const std::string& );
   };
 
 }; // namespace ta

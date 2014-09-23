@@ -74,6 +74,7 @@ namespace ta {
       Engine(Interface&);
 
       World& world();
+      Player& player();
 
       // reset game to start
       void reset();
