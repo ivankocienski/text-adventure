@@ -148,7 +148,7 @@ namespace ta {
     m_knapsack.insert( what );
   }
 
-  const boost::unordered_set<string> & Player::knapsack() const {
+  const Player::knapsack_t & Player::knapsack() const {
     return m_knapsack;
   }
 

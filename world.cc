@@ -17,8 +17,8 @@ namespace ta {
   World::World() {
   }
 
-  void World::build_room( const string &n, const vector<string> &dl ) {
-    m_rooms[n] = Room(n, dl);
+  Room * World::build_room( const string &n ) {
+    return &(m_rooms[n] = Room(n));
   }
 
   void World::list_rooms() {

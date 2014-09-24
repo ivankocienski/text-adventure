@@ -21,7 +21,9 @@ namespace ta {
       line_type type;
     };
 
-    std::list<description_line_s> m_lines;
+    typedef std::list<description_line_s> description_lines_t;
+
+    description_lines_t m_lines;
 
   public:
     Description();

@@ -16,12 +16,17 @@ namespace ta {
   class Room;
 
   class Player {
+
+  public:
+
+    typedef boost::unordered_set<std::string> knapsack_t;
+
   private:
 
     World *m_world;
     Room  *m_room;
 
-    boost::unordered_set<std::string> m_knapsack;
+    knapsack_t m_knapsack;
 
   public:
     
@@ -42,7 +47,7 @@ namespace ta {
     void pickup( const std::vector<std::string>&, Interface&);
     void putdown( const std::vector<std::string>&, Interface&);
     void give_item( const std::string& );
-    const boost::unordered_set<std::string> & knapsack() const;
+    const knapsack_t & knapsack() const;
   };
 
 }; // namespace ta

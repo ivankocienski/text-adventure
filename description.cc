@@ -40,7 +40,8 @@ namespace ta {
     
     bool has_paused = false;
 
-    for( list<description_line_s>::iterator it = m_lines.begin(); it != m_lines.end(); it++ ) {
+    description_lines_t::iterator it;
+    for( it = m_lines.begin(); it != m_lines.end(); it++ ) {
 
       if( (*it).type == LT_PAUSE ) {
 

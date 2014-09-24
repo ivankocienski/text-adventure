@@ -30,7 +30,7 @@ namespace ta {
   public:
     World();
 
-    void build_room( const std::string&, const std::vector<std::string>& );
+    Room* build_room( const std::string& );
     void list_rooms();
     Room* get_room(const std::string&);
     room_map_t & rooms();

@@ -11,7 +11,7 @@ using namespace std;
 
 namespace ta {
 
-  Room::Room( const string &n, const vector<string> &dl ) : m_name(n), m_description(dl) {
+  Room::Room( const string &n ) : m_name(n) {
   }
 
   Room::Room() { 
@@ -29,16 +29,14 @@ namespace ta {
     return m_exits.count(dir) > 0;
   }
 
+  Description& Room::description() {
+    return m_description;
+  }
+
   void Room::describe( Interface &i ) {
 
-    {
-      vector<string>::iterator it;
+    m_description.show(i);
 
-      for(it = m_description.begin(); it != m_description.end(); it++) {
-        i.puts(*it);
-      } 
-    }
-    
     if( m_exits.size() ) {
       map<string, Exit>::iterator it;
 
@@ -50,7 +48,7 @@ namespace ta {
 
     if( m_inventory.size() ) {
 
-      boost::unordered_set<string>::iterator it;
+      inventory_t::iterator it;
 
       i.puts( "You can see" );
       for(it = m_inventory.begin(); it != m_inventory.end(); it++ ) {

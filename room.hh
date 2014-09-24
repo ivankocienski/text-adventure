@@ -16,25 +16,22 @@ namespace ta {
     public:
 
       typedef std::map<std::string, Exit> exit_map_t;
+      typedef boost::unordered_set<std::string> inventory_t;
 
     private:
 
-      //Description m_description;
-
-      
+      Description m_description;
       std::string m_name;
-      std::vector<std::string> m_description;
-      
-      boost::unordered_set<std::string> m_inventory;
-
-      exit_map_t m_exits;
+      inventory_t m_inventory;
+      exit_map_t  m_exits;
 
     public:
 
-      Room( const std::string&, const std::vector<std::string>& ); 
+      Room( const std::string& ); 
       Room();
 
       std::string name();
+      Description& description();
       void describe( Interface&);
       
       bool has_exit( const std::string& );

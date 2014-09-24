@@ -416,10 +416,8 @@ namespace ta {
 
       room_t &r = (*ri).second;
 
-      m_world->build_room(
-        r.name.value(),
-        r.description.parts
-      );
+      Room *room = m_world->build_room( r.name.value() ); 
+      upload_description( room->description(), r.description ); 
     }
 
     for( room_map_t::iterator ri = m_rooms.begin(); ri != m_rooms.end(); ri++ ) {
