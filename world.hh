@@ -11,9 +11,12 @@
 namespace ta {
   
   class World {
-  private:
+  public:
 
     typedef std::map<std::string, Room> room_map_t;
+
+  private:
+
     room_map_t     m_rooms;
 
     std::map<std::string, Item> m_items;
@@ -30,6 +33,7 @@ namespace ta {
     void build_room( const std::string&, const std::vector<std::string>& );
     void list_rooms();
     Room* get_room(const std::string&);
+    room_map_t & rooms();
 
     void set_name(      const std::string &);
     void set_author(    const std::string &);

@@ -148,6 +148,10 @@ namespace ta {
     m_knapsack.insert( what );
   }
 
+  const boost::unordered_set<string> & Player::knapsack() const {
+    return m_knapsack;
+  }
+
   void Player::where( Interface &i ) {
     i.puts( 7, "You are standing in " + m_room->name() ); 
   }

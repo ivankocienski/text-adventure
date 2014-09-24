@@ -4,10 +4,9 @@
 #include <vector>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/regex.hpp>
-//#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
-//#include <boost/algorithm/string/classification.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "loader.hh"
 #include "engine.hh"
@@ -204,6 +203,44 @@ namespace ta {
   }
 
   bool EngineState::save( Engine &e ) {
+
+    ofstream file( m_source_path.native().c_str() );
+
+    file << "# adventure savefile" << endl;
+    file << "# no peeking! cheat" << endl;
+    file << endl;
+    
+    file << "VERSION 1 " << endl;
+    file << endl;
+    
+    file << "START_DATE " << e.start_date() << endl;
+    file << endl;
+
+    file << "IN_ROOM " << e.player().current_room()->name() << endl;
+    file << endl;
+
+    {
+      boost::unordered_set<std::string>::iterator it;
+      for( it = e.player().knapsack().begin(); it != e.player().knapsack().end(); it++ )
+        file << "HAS_ITEM " << *it << endl;
+    }
+
+    {
+      World::room_map_t::iterator it;
+      for( it = e.world().rooms().begin(); it != e.world().rooms().end(); it++ ) {
+
+        Room::exit_map_t &exits = (*it).second.exits();
+        Room::exit_map_t::iterator eit;
+
+        for( eit = exits.begin(); eit != exits.end(); eit++ ) {
+
+          if( (*eit).second.locked_with() == "" ) continue;
+
+          file << "DOOR_OPEN " << (*it).first << " " << (*eit).first << endl; 
+        } 
+      }
+    } 
+
     return true; 
   }
 
@@ -232,7 +269,9 @@ namespace ta {
   void Engine::reset() {
     Loader loader( &m_world, &m_player );
     loader.parse( "game.world" );
+
     //TODO: reset player, world
+    m_started_on = boost::posix_time::second_clock::local_time();
   }
 
   void Engine::handle_input( const vector<string> &words ) {
@@ -341,6 +380,14 @@ namespace ta {
 
   Player& Engine::player() {
     return m_player;
+  }
+
+  void Engine::set_start_date( const string &s ) {
+    m_started_on = boost::posix_time::from_iso_string(s); 
+  }
+
+  std::string Engine::start_date() {
+    return boost::posix_time::to_iso_string(m_started_on);
   }
 
 }; // namespace ta

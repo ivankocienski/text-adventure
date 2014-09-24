@@ -42,6 +42,7 @@ namespace ta {
     void pickup( const std::vector<std::string>&, Interface&);
     void putdown( const std::vector<std::string>&, Interface&);
     void give_item( const std::string& );
+    const boost::unordered_set<std::string> & knapsack() const;
   };
 
 }; // namespace ta

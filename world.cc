@@ -46,6 +46,10 @@ namespace ta {
     return &(*it).second;
   }
 
+  World::room_map_t & World::rooms() {
+    return m_rooms;
+  }
+
   void World::introduce( Interface &i ) {
 
     i.puts( m_name );

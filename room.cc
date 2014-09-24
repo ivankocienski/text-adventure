@@ -21,7 +21,7 @@ namespace ta {
     return m_name;
   }
 
-  map<string, Exit> & Room::exits() {
+  Room::exit_map_t & Room::exits() {
     return m_exits;
   }
   

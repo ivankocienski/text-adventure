@@ -34,6 +34,7 @@ all: $(OBJECTS)
 clean:
 	rm -f $(EXE)
 	rm -f *.o
+	rm -f sdl/*.o
 
 tags: FORCE
 	ctags *.cc *.hh

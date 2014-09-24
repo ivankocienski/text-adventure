@@ -13,6 +13,10 @@ namespace ta {
 
   class Room {
 
+    public:
+
+      typedef std::map<std::string, Exit> exit_map_t;
+
     private:
 
       //Description m_description;
@@ -23,7 +27,7 @@ namespace ta {
       
       boost::unordered_set<std::string> m_inventory;
 
-      std::map<std::string, Exit> m_exits;
+      exit_map_t m_exits;
 
     public:
 
@@ -34,7 +38,7 @@ namespace ta {
       void describe( Interface&);
       
       bool has_exit( const std::string& );
-      std::map<std::string, Exit> & exits();
+      exit_map_t & exits();
 
       void add_item_to_inventory( const std::string& );
       bool is_item_in_inventory( const std::string& );
