@@ -52,6 +52,16 @@ namespace ta {
     m_world->get_item( w ).describe(i);
   }
 
+  void Player::describe_person( Interface &i, const string &w ) {
+
+    if( !m_room->has_character( w ) ) {
+      i.puts( 1, "That person is not in this room");
+      return;
+    }
+
+    m_world->get_character( w ).describe(i);
+  }
+
   void Player::go( const std::vector<std::string>& words, Interface &i ) {
 
     if( words.size() < 2 ) {
@@ -189,7 +199,23 @@ namespace ta {
       case Exit::LR_UNLOCKED:
         i.puts( 7, "The " + dir + " door has been unlocked" );
         break;
-    }
+    } 
   }
 
+  void Player::talk( const vector<string> &words, Interface &i ) {
+    if( words.size() < 2 ) {
+      i.puts( 1, "Who should I talk to, sir?" );
+      return; 
+    }
+
+    string name = words[1];
+
+    if( !m_room->has_character(name) ) {
+      i.puts( 1, "Could not find them in this room" );
+      return;
+    }
+
+    m_world->get_character( name ).talk( i );
+
+  }
 }; // namespace ta;

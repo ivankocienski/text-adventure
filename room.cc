@@ -57,6 +57,18 @@ namespace ta {
         i.puts( "  " + name );
       }
     }
+
+    if( m_characters.size() ) {
+
+      character_set_t::iterator it;
+      i.puts( "In the room there is" );
+      for(it = m_characters.begin(); it != m_characters.end(); it++ ) {
+        string name = *it;
+
+        i.puts( "  " + name );
+      }
+
+    }
     
   }
 
@@ -70,6 +82,14 @@ namespace ta {
 
   void Room::remove_item_from_inventory( const string &w ) {
     m_inventory.erase(w); 
+  }
+
+  void Room::place_character( const string &n ) {
+    m_characters.insert(n);
+  }
+
+  bool Room::has_character( const string &n ) {
+    return m_characters.count(n) > 0;
   }
 
 

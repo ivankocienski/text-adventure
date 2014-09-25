@@ -18,6 +18,7 @@ SOURCES= \
 	exit.cc \
 	application.cc \
 	save_menu.cc \
+	character.cc \
 	sdl/screen.cc \
 	sdl/event.cc \
 	sdl/surface.cc

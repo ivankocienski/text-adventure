@@ -38,6 +38,7 @@ namespace ta {
     void describe_room(Interface&);
     void describe_exit(Interface&, const std::string&);
     void describe_item(Interface&, const std::string&);
+    void describe_person(Interface&, const std::string&);
 
     void where( Interface& );
     void go( const std::vector<std::string>&, Interface&);
@@ -48,6 +49,8 @@ namespace ta {
     void putdown( const std::vector<std::string>&, Interface&);
     void give_item( const std::string& );
     const knapsack_t & knapsack() const;
+
+    void talk( const std::vector<std::string>&, Interface& );
   };
 
 }; // namespace ta

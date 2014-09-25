@@ -9,6 +9,7 @@
 #include "room.hh"
 #include "world.hh"
 #include "item.hh"
+#include "character.hh"
 
 using namespace std;
 
@@ -88,6 +89,19 @@ namespace ta {
   bool World::has_item( const string &n ) {
     return m_items.count(n) > 0;
   }
+
+  bool World::has_character( const string &n ) {
+    return m_characters.count(n) > 0;
+  }
+
+  Character & World::create_character( const string &n ) {
+    return m_characters[n] = Character(n);
+  }
+
+  Character & World::get_character( const string &n ) {
+    return m_characters[n];
+  }
+
 
 
 }; // namespace ta

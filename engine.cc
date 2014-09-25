@@ -296,6 +296,11 @@ namespace ta {
       return;
     } 
 
+    if(words[0] == "talk" ) {
+      m_player.talk( words, m_interface );
+      return;
+    }
+
     if(words[0] == "describe") {
 
       if( words.size() == 1 || words[1] == "room" ) {
@@ -321,6 +326,16 @@ namespace ta {
         }
 
         m_player.describe_exit( m_interface, words[2] );
+        return;
+      }
+
+      if( words[1] == "person" ) {
+        if( words.size() != 3 ) {
+          m_interface.puts( 1, "Which person should I describe to you?" );
+          return;
+        }
+
+        m_player.describe_person( m_interface, words[2] );
         return;
       }
 

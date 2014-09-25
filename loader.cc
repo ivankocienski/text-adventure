@@ -71,8 +71,6 @@ namespace ta {
             desc.parts.push_back( parser.line() );
           break;
 
-        
-
         case Parser::TT_TOKEN:
           switch( parser.token_code() ) {
 
@@ -85,6 +83,44 @@ namespace ta {
 
             default:
               moan( parser, "bad token at DESCRIBE" );
+              break;
+          }
+
+          break;
+      }
+    }
+  }
+
+  void Loader::parse_talk( decleration_t &talk, Parser &parser ) {
+
+    set_decleration( talk, parser );
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in TALK" );
+          return;
+
+        case Parser::TT_STRING:
+          if( parser.line() == "." )
+            talk.parts.push_back( "" );
+          else
+            talk.parts.push_back( parser.line() );
+          break;
+
+        case Parser::TT_TOKEN:
+          switch( parser.token_code() ) {
+
+            case TC_ENDTALK:
+              return;
+
+            case TC_PAUSE: 
+              talk.parts.push_back( " " );
+              break;
+
+            default:
+              moan( parser, "bad token at TALK" );
               break;
           }
 
@@ -188,6 +224,54 @@ namespace ta {
     }
   }
 
+  void Loader::parse_character( character_t &chr, string &room_name, Parser &parser ) {
+
+    if( chr.assigned ) {
+      moan( parser, "Character already exists in world, see line " + chr.line );
+      return;
+    }
+
+    chr.assigned = true;
+    chr.line     = parser.line_number();
+    chr.in_room  = room_name;
+
+    set_decleration( chr.name, parser );
+
+    while( true ) {
+
+      switch( parser.next_token() ) {
+        case Parser::TT_EOF:
+          moan( parser, "Unexpected end of file in CHARACTER" );
+          return;
+
+        case Parser::TT_STRING:
+          moan( parser, "Unexpected string in CHARACTER" );
+          break; 
+
+        case Parser::TT_TOKEN:
+          switch( parser.token_code() ) {
+
+            case TC_ENDCHARACTER:
+              return;
+
+            case TC_TALK: 
+              parse_talk( chr.talk, parser );
+              break;
+
+            case TC_DESCRIBE:
+              parse_describe( chr.description, parser );
+              break;
+
+            default:
+              moan( parser, "bad token at CHARACTER" );
+              break;
+          }
+
+          break;
+      }
+    }
+  }
+
   void Loader::parse_room( Parser &parser ) {
 
     room_t &room = m_rooms[ parser.first_match() ];
@@ -224,6 +308,14 @@ namespace ta {
                 m_items[ parser.first_match() ], 
                 room.name.value(),
                 parser 
+              );
+              break;
+              
+            case TC_CHARACTER:
+              parse_character(
+                m_characters[ parser.first_match() ],
+                room.name.value(),
+                parser
               );
               break;
 
@@ -395,6 +487,26 @@ namespace ta {
       item.set_room( r );
     }
   }
+
+  void Loader::upload_characters() {
+
+    for( character_map_t::iterator ri = m_characters.begin(); ri != m_characters.end(); ri++ ) {
+
+      character_t &cd = (*ri).second;
+
+      Character & character = m_world->create_character( (const string)cd.name.value() );
+      upload_description( character.description(), cd.description );
+
+      // nasty; talk is basically just a description
+      // but at least it could be something else in future.
+      upload_description( character.talk_obj(), cd.talk );
+
+      // this should never fail.
+      Room *r = m_world->get_room( cd.in_room );
+
+      r->place_character( cd.name.value() );
+    }
+  }
   
   void Loader::upload_globals() {
 
@@ -444,24 +556,28 @@ namespace ta {
     Parser parser( fn );
 
     // not the best way to write a parser, but hey...
-    parser.define_matcher( TC_NAME,        "^%NAME\\s+(.+)" );
-    parser.define_matcher( TC_AUTHOR,      "^%AUTHOR\\s+(.+)" );
-    parser.define_matcher( TC_COPYRIGHT,   "^%COPYRIGHT\\s+(.+)" );
-    parser.define_matcher( TC_START,       "^%START\\s+(.+)" );
-    parser.define_matcher( TC_ROOM,        "^%ROOM\\s+(.+)" );
-    parser.define_matcher( TC_DESCRIBE,    "^%DESCRIBE\\b" );
-    parser.define_matcher( TC_EXIT,        "^%EXIT\\s+(\\w+)" );
-    parser.define_matcher( TC_ENDDESCRIBE, "^%ENDDESCRIBE\\b" );
-    parser.define_matcher( TC_ENDROOM,     "^%ENDROOM\\b" );
-    parser.define_matcher( TC_ITEM,        "^%ITEM\\s+(\\w+)" );
-    parser.define_matcher( TC_ENDITEM,     "^%ENDITEM\\b" );
-    parser.define_matcher( TC_VERSION,     "^%VERSION\\s+(\\w+)" );
-    parser.define_matcher( TC_INTRO,       "^%INTRO\\b" );
-    parser.define_matcher( TC_ENDINTRO,    "^%ENDINTRO\\b" );
-    parser.define_matcher( TC_PAUSE,       "^%PAUSE\\b" );
-    parser.define_matcher( TC_GOTO,        "^%GOTO\\s+(\\w+)" );
-    parser.define_matcher( TC_ENDEXIT,     "^%ENDEXIT\\b" );
-    parser.define_matcher( TC_LOCKEDBY,    "^%LOCKEDBY\\s+(\\w+)" );
+    parser.define_matcher( TC_NAME,         "^%NAME\\s+(.+)" );
+    parser.define_matcher( TC_AUTHOR,       "^%AUTHOR\\s+(.+)" );
+    parser.define_matcher( TC_COPYRIGHT,    "^%COPYRIGHT\\s+(.+)" );
+    parser.define_matcher( TC_START,        "^%START\\s+(.+)" );
+    parser.define_matcher( TC_ROOM,         "^%ROOM\\s+(.+)" );
+    parser.define_matcher( TC_DESCRIBE,     "^%DESCRIBE\\b" );
+    parser.define_matcher( TC_EXIT,         "^%EXIT\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDDESCRIBE,  "^%ENDDESCRIBE\\b" );
+    parser.define_matcher( TC_ENDROOM,      "^%ENDROOM\\b" );
+    parser.define_matcher( TC_ITEM,         "^%ITEM\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDITEM,      "^%ENDITEM\\b" );
+    parser.define_matcher( TC_VERSION,      "^%VERSION\\s+(\\w+)" );
+    parser.define_matcher( TC_INTRO,        "^%INTRO\\b" );
+    parser.define_matcher( TC_ENDINTRO,     "^%ENDINTRO\\b" );
+    parser.define_matcher( TC_PAUSE,        "^%PAUSE\\b" );
+    parser.define_matcher( TC_GOTO,         "^%GOTO\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDEXIT,      "^%ENDEXIT\\b" );
+    parser.define_matcher( TC_LOCKEDBY,     "^%LOCKEDBY\\s+(\\w+)" );
+    parser.define_matcher( TC_CHARACTER,    "^%CHARACTER\\s+(\\w+)" );
+    parser.define_matcher( TC_ENDCHARACTER, "^%ENDCHARACTER\\b" );
+    parser.define_matcher( TC_TALK,         "^%TALK\\b" );
+    parser.define_matcher( TC_ENDTALK,      "^%ENDTALK\\b" );
 
     parse_toplevel( parser );
 
@@ -472,6 +588,7 @@ namespace ta {
 
     upload_rooms();
     upload_items();
+    upload_characters();
     upload_globals();
   }
 

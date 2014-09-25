@@ -7,6 +7,7 @@
 
 #include "room.hh"
 #include "item.hh"
+#include "character.hh"
 
 namespace ta {
   
@@ -14,12 +15,14 @@ namespace ta {
   public:
 
     typedef std::map<std::string, Room> room_map_t;
+    typedef std::map<std::string, Item> item_map_t;
+    typedef std::map<std::string, Character> character_map_t;
 
   private:
 
-    room_map_t     m_rooms;
-
-    std::map<std::string, Item> m_items;
+    room_map_t      m_rooms;
+    item_map_t      m_items;
+    character_map_t m_characters;
 
     std::string m_name;
     std::string m_author;
@@ -46,6 +49,10 @@ namespace ta {
     bool has_item( const std::string & );
     Item & create_item( const std::string & );
     Item & get_item( const std::string & );
+
+    bool has_character( const std::string & );
+    Character& create_character( const std::string & );
+    Character& get_character( const std::string& );
   };
 
 }; // namespace ta

@@ -8,6 +8,7 @@
 #include "interface.hh"
 #include "description.hh"
 #include "exit.hh"
+#include "character.hh"
 
 namespace ta { 
 
@@ -17,13 +18,15 @@ namespace ta {
 
       typedef std::map<std::string, Exit> exit_map_t;
       typedef boost::unordered_set<std::string> inventory_t;
+      typedef boost::unordered_set<std::string> character_set_t;
 
     private:
 
-      Description m_description;
-      std::string m_name;
-      inventory_t m_inventory;
-      exit_map_t  m_exits;
+      Description      m_description;
+      std::string      m_name;
+      inventory_t      m_inventory;
+      exit_map_t       m_exits;
+      character_set_t  m_characters;
 
     public:
 
@@ -40,6 +43,9 @@ namespace ta {
       void add_item_to_inventory( const std::string& );
       bool is_item_in_inventory( const std::string& );
       void remove_item_from_inventory( const std::string & );
+
+      void place_character( const std::string& );
+      bool has_character( const std::string& );
   };
 
 }; // namespace ta

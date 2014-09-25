@@ -54,6 +54,21 @@
 
   %ENDITEM
 
+  %CHARACTER barney
+
+    %DESCRIBE
+      He's a dude. A dude who will help you
+    %ENDDESCRIBE
+
+    %TALK
+      "HI" he sais.
+      "HI" you reply.
+      "Beer?"
+      You drink beer.
+    %ENDTALK
+
+  %ENDCHARACTER
+
 %ENDROOM
 
 

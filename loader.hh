@@ -93,7 +93,6 @@ namespace ta {
     } exit_t;
 
     typedef struct item_s {
-
       bool assigned;
       size_t line;
 
@@ -105,11 +104,23 @@ namespace ta {
       // cannot be blank
       std::string in_room; 
     } item_t;
-
     typedef std::map<std::string, item_t> item_map_t;
 
-    typedef struct room_s {
+    typedef struct character_s {
+      bool assigned;
+      size_t line;
 
+      character_s() : assigned( false ), line(0) {}
+
+      decleration_t name;
+      decleration_t talk; 
+      decleration_t description;
+
+      std::string in_room;
+    } character_t;
+    typedef std::map<std::string, character_t> character_map_t;
+
+    typedef struct room_s {
       decleration_t name; 
       decleration_t description; 
 
@@ -119,9 +130,10 @@ namespace ta {
 
     typedef std::map<std::string, room_t> room_map_t;
 
-    global_t   m_globals;
-    room_map_t m_rooms;
-    item_map_t m_items;
+    global_t         m_globals;
+    room_map_t       m_rooms;
+    item_map_t       m_items;
+    character_map_t  m_characters;
     
     /* Engine owns World and Player, we're just borrowing them
        here, so its okay. i hope. */
@@ -149,7 +161,11 @@ namespace ta {
       TC_PAUSE,
       TC_ENDEXIT,
       TC_GOTO,
-      TC_LOCKEDBY
+      TC_LOCKEDBY,
+      TC_CHARACTER,
+      TC_ENDCHARACTER,
+      TC_TALK,
+      TC_ENDTALK
     };
 
     void moan( const Parser&, const std::string& );
@@ -158,16 +174,19 @@ namespace ta {
     void set_decleration( decleration_t&, const Parser& );
 
     void parse_describe( decleration_t&, Parser& );
+    void parse_talk( decleration_t&, Parser& ); 
 
     void parse_exit( exit_t&, Parser& );
     void parse_item( item_t&, std::string&, Parser& );
     void parse_room( Parser& );
+    void parse_character( character_t&, std::string&, Parser& );
     void parse_intro( Parser& );
     void parse_toplevel( Parser& );
 
     void upload_description( Description&, decleration_t& );
     bool upload_exit( Exit&, exit_t& );
     void upload_items();
+    void upload_characters();
     void upload_rooms();
     void upload_globals();
 
