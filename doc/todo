@@ -5,9 +5,9 @@ TODO :-
 * save game
 * load game
 
-- fix room description
+* fix room description
 
-- characters (see notes)
+* characters (see notes)
 
 - stages
   - like levels. allows us to have different logic for

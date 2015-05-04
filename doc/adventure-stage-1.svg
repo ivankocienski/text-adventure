@@ -51,18 +51,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="279.18426"
-     inkscape:cy="564.44189"
+     inkscape:zoom="1"
+     inkscape:cx="263.14863"
+     inkscape:cy="604.16338"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showborder="false"
      inkscape:window-width="1112"
      inkscape:window-height="870"
-     inkscape:window-x="1349"
-     inkscape:window-y="89"
-     inkscape:window-maximized="0" />
+     inkscape:window-x="1303"
+     inkscape:window-y="85"
+     inkscape:window-maximized="0"
+     inkscape:snap-object-midpoints="false"
+     inkscape:snap-global="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -78,7 +80,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     sodipodi:insensitive="true">
     <g
        id="g3087"
        style="fill:#00bd07;fill-opacity:1">
@@ -166,17 +169,17 @@
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Standard Symbols L;-inkscape-font-specification:Standard Symbols L"
-       x="259.37869"
-       y="507.91245"
+       x="185.13248"
+       y="489.52768"
        id="text3063"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3065"
-         x="259.37869"
-         y="507.91245">ready </tspan><tspan
+         x="185.13248"
+         y="489.52768">ready </tspan><tspan
          sodipodi:role="line"
-         x="259.37869"
-         y="522.91241"
+         x="185.13248"
+         y="504.52768"
          id="tspan3067">room</tspan></text>
     <rect
        style="fill:#f20068;fill-opacity:1;stroke:none"
@@ -208,7 +211,7 @@
        id="path3864"
        inkscape:connector-curvature="0" />
     <rect
-       style="fill:#f20068;fill-opacity:1;stroke:none;opacity:0.16666667"
+       style="opacity:0.16666667;fill:#f20068;fill-opacity:1;stroke:none"
        id="rect2985-8-9-4"
        width="38.183765"
        height="38.183765"
@@ -223,7 +226,7 @@
        sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Standard Symbols L;-inkscape-font-specification:Standard Symbols L;opacity:0.16666666999999999"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.16666667;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Standard Symbols L;-inkscape-font-specification:Standard Symbols L"
        x="47.5"
        y="305.86218"
        id="text4516"
@@ -249,7 +252,7 @@
          y="395.86218"
          style="font-size:6px;fill:#ffffff;fill-opacity:1">locked</tspan></text>
     <rect
-       style="fill:#f20068;fill-opacity:1;stroke:none;opacity:0.16666667"
+       style="opacity:0.16666667;fill:#f20068;fill-opacity:1;stroke:none"
        id="rect2985-8-9-4-4"
        width="38.183765"
        height="38.183765"
@@ -257,13 +260,13 @@
        y="324.27029"
        ry="0.96143764" />
     <path
-       style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;opacity:0.16666666999999999"
+       style="opacity:0.16666667;fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -7,344.86218 48.5,0"
        id="path4548"
        inkscape:connector-curvature="0" />
     <text
        xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Standard Symbols L;-inkscape-font-specification:Standard Symbols L;opacity:0.16666666999999999"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;opacity:0.16666667;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Standard Symbols L;-inkscape-font-specification:Standard Symbols L"
        x="-51"
        y="288.86218"
        id="text4550"
