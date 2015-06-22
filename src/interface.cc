@@ -34,7 +34,7 @@ namespace ta {
       exit(-1);
     }
 
-    if( !m_debug_font.load( "font.png" ) ) {
+    if( !m_debug_font.load( "data/font.png" ) ) {
       cerr << "Failed to load font" << endl;
       exit(-1);
     }

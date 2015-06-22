@@ -268,7 +268,7 @@ namespace ta {
 
   void Engine::reset() {
     Loader loader( &m_world, &m_player );
-    loader.parse( "game.world" );
+    loader.parse( "data/game.world" );
 
     //TODO: reset player, world
     m_started_on = boost::posix_time::second_clock::local_time();
